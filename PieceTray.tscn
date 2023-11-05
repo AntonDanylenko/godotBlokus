@@ -1,0 +1,130 @@
+[gd_scene format=2]
+
+[node name="PieceTray" type="Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 40.0
+margin_top = 1080.0
+margin_right = -40.0
+margin_bottom = -120.0
+mouse_filter = 2
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="TrayDrawing" type="Panel" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="TrayBorder" type="ColorRect" parent="TrayDrawing"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color( 0.870588, 0.870588, 0.870588, 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="TrayBottom" type="ColorRect" parent="TrayDrawing"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = 8.0
+margin_right = -8.0
+margin_bottom = -8.0
+mouse_filter = 2
+color = Color( 0.705882, 0.705882, 0.705882, 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="LeftShadow1" type="ColorRect" parent="TrayDrawing"]
+margin_left = 4.0
+margin_top = 6.0
+margin_right = 6.0
+margin_bottom = 236.0
+mouse_filter = 2
+color = Color( 0.388235, 0.388235, 0.388235, 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="LeftShadow2" type="ColorRect" parent="TrayDrawing"]
+margin_left = 6.0
+margin_top = 8.0
+margin_right = 8.0
+margin_bottom = 234.0
+mouse_filter = 2
+color = Color( 0.388235, 0.388235, 0.388235, 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="BottomShadow1" type="ColorRect" parent="TrayDrawing"]
+margin_left = 2.0
+margin_top = 238.0
+margin_right = 880.0
+margin_bottom = 240.0
+mouse_filter = 2
+color = Color( 0.27451, 0.27451, 0.27451, 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="BottomShadow2" type="ColorRect" parent="TrayDrawing"]
+margin_left = 4.0
+margin_top = 236.0
+margin_right = 880.0
+margin_bottom = 238.0
+mouse_filter = 2
+color = Color( 0.27451, 0.27451, 0.27451, 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="TopShadow1" type="ColorRect" parent="TrayDrawing"]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 874.0
+margin_bottom = 6.0
+mouse_filter = 2
+color = Color( 0.27451, 0.27451, 0.27451, 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="TopShadow2" type="ColorRect" parent="TrayDrawing"]
+margin_left = 6.0
+margin_top = 6.0
+margin_right = 872.0
+margin_bottom = 8.0
+mouse_filter = 2
+color = Color( 0.27451, 0.27451, 0.27451, 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="RightShadow1" type="ColorRect" parent="TrayDrawing"]
+margin_left = 876.0
+margin_top = 2.0
+margin_right = 878.0
+margin_bottom = 236.0
+mouse_filter = 2
+color = Color( 0.388235, 0.388235, 0.388235, 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="RightShadow2" type="ColorRect" parent="TrayDrawing"]
+margin_left = 878.0
+margin_right = 880.0
+margin_bottom = 238.0
+mouse_filter = 2
+color = Color( 0.388235, 0.388235, 0.388235, 1 )
+__meta__ = {
+"_edit_lock_": true
+}
