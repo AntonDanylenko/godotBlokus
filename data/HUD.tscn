@@ -1,8 +1,18 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://data/Board.tscn" type="PackedScene" id=1]
 [ext_resource path="res://data/PieceTray.tscn" type="PackedScene" id=2]
+[ext_resource path="res://art/button_theme.tres" type="Theme" id=3]
 [ext_resource path="res://src/HUD.gd" type="Script" id=4]
+[ext_resource path="res://fonts/Univers Condensed Regular.ttf" type="DynamicFontData" id=5]
+
+[sub_resource type="DynamicFont" id=1]
+size = 30
+font_data = ExtResource( 5 )
+
+[sub_resource type="DynamicFont" id=2]
+size = 30
+font_data = ExtResource( 5 )
 
 [node name="HUD" type="Control"]
 anchor_right = 1.0
@@ -42,5 +52,26 @@ margin_right = 864.0
 margin_bottom = 210.0
 rect_min_size = Vector2( 864, 210 )
 mouse_filter = 2
+
+[node name="UndoButton" type="Button" parent="."]
+margin_left = 40.0
+margin_top = 1340.0
+margin_right = 140.0
+margin_bottom = 1380.0
+rect_min_size = Vector2( 40, 40 )
+theme = ExtResource( 3 )
+custom_fonts/font = SubResource( 1 )
+text = "UNDO"
+
+[node name="NextTurnButton" type="Button" parent="."]
+margin_left = 720.0
+margin_top = 1340.0
+margin_right = 920.0
+margin_bottom = 1380.0
+rect_min_size = Vector2( 40, 40 )
+theme = ExtResource( 3 )
+custom_fonts/font = SubResource( 2 )
+text = "NEXT TURN"
+expand_icon = true
 
 [connection signal="piece_placed" from="." to="Board" method="_on_HUD_piece_placed"]

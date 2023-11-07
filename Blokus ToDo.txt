@@ -7,14 +7,22 @@
 
 4. Add multiple players.
 	a. Add pieces to tray with code.
+		i. Make tray scrollable.
+		ii. Allocate tray space dynamically.
+		iii. Return pieces to tray if placed off board.
 	b. Identify player by color.
 	c. List for pieces player has left.
 	d. Place one piece per round.
+		i. Can undo and place another piece.
+	e. Make next turn button.
 5. Restrict placement to corners.
 6. Make larger pieces.
 	a. Pieces cant hang off board.
 	b. Pieces cant overlap others.
 7. Rotate pieces.
+	a. Matrix multiplication for rotation?
 8. Make sure pieces cant touch by side.
 9. Make all pieces.
 10. Rotate board.
+11. Check each turn if no more pieces can be placed and skip player if so.
+
