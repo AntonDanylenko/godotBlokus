@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://art/board_tile.png" type="Texture" id=1]
 [ext_resource path="res://src/Board.gd" type="Script" id=2]
 [ext_resource path="res://art/selection_frame.png" type="Texture" id=3]
+[ext_resource path="res://art/piece_tile.png" type="Texture" id=4]
 
 [sub_resource type="ConvexPolygonShape2D" id=2]
 points = PoolVector2Array( 0, 0, 440, 0, 440, 440, 0, 440 )
@@ -33,6 +34,22 @@ points = PoolVector2Array( 0, 0, 440, 0, 440, 440, 0, 440 )
 [sub_resource type="TileSet" id=3]
 0/name = "selection_frame.png 0"
 0/texture = ExtResource( 3 )
+0/tex_offset = Vector2( 0, 0 )
+0/modulate = Color( 1, 1, 1, 1 )
+0/region = Rect2( 0, 0, 440, 440 )
+0/tile_mode = 0
+0/occluder_offset = Vector2( 0, 0 )
+0/navigation_offset = Vector2( 0, 0 )
+0/shape_offset = Vector2( 0, 0 )
+0/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+0/shape_one_way = false
+0/shape_one_way_margin = 0.0
+0/shapes = [  ]
+0/z_index = 0
+
+[sub_resource type="TileSet" id=4]
+0/name = "piece_tile.png 0"
+0/texture = ExtResource( 4 )
 0/tex_offset = Vector2( 0, 0 )
 0/modulate = Color( 1, 1, 1, 1 )
 0/region = Rect2( 0, 0, 440, 440 )
@@ -137,5 +154,33 @@ __meta__ = {
 [node name="SelectionTiles" type="TileMap" parent="."]
 scale = Vector2( 0.1, 0.1 )
 tile_set = SubResource( 3 )
+cell_size = Vector2( 440, 440 )
+format = 1
+
+[node name="PlacedTilesR" type="TileMap" parent="."]
+self_modulate = Color( 0.894118, 0.121569, 0.121569, 1 )
+scale = Vector2( 0.1, 0.1 )
+tile_set = SubResource( 4 )
+cell_size = Vector2( 440, 440 )
+format = 1
+
+[node name="PlacedTilesG" type="TileMap" parent="."]
+self_modulate = Color( 0.176471, 0.827451, 0.192157, 1 )
+scale = Vector2( 0.1, 0.1 )
+tile_set = SubResource( 4 )
+cell_size = Vector2( 440, 440 )
+format = 1
+
+[node name="PlacedTilesB" type="TileMap" parent="."]
+self_modulate = Color( 0.239216, 0.388235, 0.866667, 1 )
+scale = Vector2( 0.1, 0.1 )
+tile_set = SubResource( 4 )
+cell_size = Vector2( 440, 440 )
+format = 1
+
+[node name="PlacedTilesY" type="TileMap" parent="."]
+self_modulate = Color( 0.886275, 0.882353, 0.321569, 1 )
+scale = Vector2( 0.1, 0.1 )
+tile_set = SubResource( 4 )
 cell_size = Vector2( 440, 440 )
 format = 1

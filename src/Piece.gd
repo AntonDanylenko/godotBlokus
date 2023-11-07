@@ -9,7 +9,7 @@ signal dropped(id)
 var dragging = false
 var mousePos = null
 
-var color = "R"
+var color = "B"
 
 
 # Helper functions
@@ -30,7 +30,7 @@ func _process(_delta):
 
 
 # Signal functions
-func _on_Area2D_input_event(_viewport, event, _shape_idx):
+func _on_Piece_input_event(_viewport, event, _shape_idx):
 	# Start and stop dragging at every mouse click
 	if (event is InputEventMouseButton and 
 		event.pressed and 
