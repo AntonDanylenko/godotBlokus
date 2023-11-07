@@ -24,5 +24,5 @@ func _process(_delta):
 # Signal functions
 func _on_HUD_piece_placed(color, location):
 	board[location.y][location.x] = color
-	print_board()
+#	print_board()
 	get_node("PlacedTiles"+color).set_cellv(location,0)

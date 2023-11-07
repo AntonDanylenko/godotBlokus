@@ -26,6 +26,21 @@ func _get_nearest_square(piece):
 								clamp(stepify(piecePosition.y-TILESIZE.y/2, TILESIZE.y),0,BOARDSIZE.y-TILESIZE.y))
 	return nearestSquare
 
+func _instantiate_piece(type):
+	# Instantiate a piece
+	var pieceContainerScene = load("res://data/PieceContainer.tscn")
+	var pieceContainer = pieceContainerScene.instance()
+	$PieceTray/TrayScroll/InnerTray.add_child(pieceContainer)
+	var piece = pieceContainer.get_node("Piece")
+	# Connect signals and instantiate pieceDict.
+	piece.connect("pickedup", self, "_on_Piece_pickedup")
+	piece.connect("dropped", self, "_on_Piece_dropped")
+	piece.connect("overBoard", self, "_on_Piece_overBoard")
+	piece.connect("notOverBoard", self, "_on_Piece_notOverBoard")
+	pieceDict[piece] = {}
+	pieceDict[piece]["overBoard"] = false
+	pieceDict[piece]["type"] = type
+
 
 func _ready():
 	# Instantiate globals
@@ -33,23 +48,10 @@ func _ready():
 	BOARDSIZE = $Board.rect_size
 	TILESIZE = $Board/BoardTiles.cell_size * $Board/BoardTiles.scale
 	TRAYGP = $PieceTray/TrayScroll/InnerTray.rect_position
-	var pieceContainerScene = load("res://data/PieceContainer.tscn")
 	
 	# Instantiate pieces
-	# Set piece locations on piece tray, connect signals, and instantiate pieceDict.
-	for _i in range(3):
-		var pieceContainer = pieceContainerScene.instance()
-		$PieceTray/TrayScroll/InnerTray.add_child(pieceContainer)
-		var piece = pieceContainer.get_node("Piece")
-#		var piecePosition = Vector2(TRAYGP.x + i*TILESIZE.x*2,TRAYGP.y)
-#		piece.get_node("Sprite").global_position = piecePosition 
-#		piece.get_node("CollisionShape2D").global_position = piecePosition
-		piece.connect("pickedup", self, "_on_Piece_pickedup")
-		piece.connect("dropped", self, "_on_Piece_dropped")
-		piece.connect("overBoard", self, "_on_Piece_overBoard")
-		piece.connect("notOverBoard", self, "_on_Piece_notOverBoard")
-		pieceDict[piece] = {}
-		pieceDict[piece]["overBoard"] = false
+	for type in [1,1,1]:
+		_instantiate_piece(type)
 
 
 func _process(_delta):
@@ -91,8 +93,8 @@ func _on_Piece_pickedup(id):
 	add_child(curPiece)
 
 func _on_Piece_dropped(id):
-	# Snap piece to nearest tile when dropped over board.
 	print(str(id) + " Dropped")
+	# Snap piece to nearest tile when dropped over board.
 	if pieceDict[id]["overBoard"]:
 		# Remove outline from nearest square.
 		if curSelected != null:
@@ -100,12 +102,14 @@ func _on_Piece_dropped(id):
 			curSelected = null
 		# Get board coordinate of drop.
 		var nearestSquare = _get_nearest_square(id)
-#		var globalNearestSquare = Vector2(nearestSquare.x+BOARDGP.x+TILESIZE.x/2,nearestSquare.y+BOARDGP.y+TILESIZE.y/2)
-#		id.get_node("Sprite").global_position = globalNearestSquare
-#		id.get_node("CollisionShape2D").global_position = globalNearestSquare
 		var nearestSquareIndex = Vector2(nearestSquare.x/TILESIZE.x, nearestSquare.y/TILESIZE.y)
+		# Remove piece from HUD and signal board that it has been placed.
 		remove_child(id)
 		emit_signal("piece_placed", id.get_color(), nearestSquareIndex)
+	# Place piece back on tray if dropped anywhere other than board.
 	else:
-		$PieceTray/TrayScroll/InnerTray.add_child(id)
+		remove_child(id)
+		var type = pieceDict[id]["type"]
+		pieceDict.erase(id)
+		_instantiate_piece(type)
 	curPiece = null
