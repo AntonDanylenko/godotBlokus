@@ -5,17 +5,21 @@ signal notOverBoard(id)
 signal pickedup(id)
 signal dropped(id)
 
-# Declare member variables here. Examples:
+# Variables
+var COLORS = {"R":"e41f1f","G":"3fa92e","B":"3d63dd","Y":"e2e152"}
 var dragging = false
 var mousePos = null
 
-var color = "B"
+var color = null
 
 
 # Helper functions
 func get_color():
 	return color
 
+func set_color(input):
+	color = input
+	$Sprite.self_modulate = COLORS[color]
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

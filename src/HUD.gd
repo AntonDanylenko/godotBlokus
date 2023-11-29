@@ -3,14 +3,16 @@ extends Control
 signal piece_placed(color, location)
 
 
-# Declare variables here.
+# Variables
 var BOARDGP = null
 var BOARDSIZE = null
 var TILESIZE = null
 var TRAYGP = null
-var PLAYERS = ["R","G","B","Y"]
 
+var PIECETYPES = [1,1,1]
+var PLAYERS = ["Y","R","G","B"]
 var curPlayer = null
+var playerPiecesDict = {}
 
 var pieceDict = {}
 var curPiece = null
@@ -32,6 +34,7 @@ func _instantiate_piece(type):
 	var pieceContainer = pieceContainerScene.instance()
 	$PieceTray/TrayScroll/InnerTray.add_child(pieceContainer)
 	var piece = pieceContainer.get_node("Piece")
+	piece.set_color(curPlayer)
 	# Connect signals and instantiate pieceDict.
 	piece.connect("pickedup", self, "_on_Piece_pickedup")
 	piece.connect("dropped", self, "_on_Piece_dropped")
@@ -52,16 +55,15 @@ func _ready():
 	randomize()
 	PLAYERS.shuffle()
 	print(PLAYERS)
+	# Instantiate player piece lists
+	for color in PLAYERS:
+		playerPiecesDict[color] = PIECETYPES
 	
 	# Start Game screen
 	var startScreenScene = load("res://data/StartScreen.tscn")
 	var startScreen = startScreenScene.instance()
 	add_child(startScreen)
 	startScreen.get_node("StartGameButton").connect("pressed", self, "_on_Start_Pressed")
-	
-	# Instantiate pieces
-	for type in [1,1,1]:
-		_instantiate_piece(type)
 
 
 func _process(_delta):
@@ -80,6 +82,10 @@ func _process(_delta):
 
 # Signal functions
 func _on_Start_Pressed():
+	curPlayer = PLAYERS[0]
+	# Instantiate first player pieces
+	for type in playerPiecesDict[curPlayer]:
+		_instantiate_piece(type)
 	# Remove start screen scene
 	remove_child($StartScreen)
 
