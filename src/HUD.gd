@@ -48,6 +48,16 @@ func _ready():
 	BOARDSIZE = $Board.rect_size
 	TILESIZE = $Board/BoardTiles.cell_size * $Board/BoardTiles.scale
 	TRAYGP = $PieceTray/TrayScroll/InnerTray.rect_position
+	# Randomize player order
+	randomize()
+	PLAYERS.shuffle()
+	print(PLAYERS)
+	
+	# Start Game screen
+	var startScreenScene = load("res://data/StartScreen.tscn")
+	var startScreen = startScreenScene.instance()
+	add_child(startScreen)
+	startScreen.get_node("StartGameButton").connect("pressed", self, "_on_Start_Pressed")
 	
 	# Instantiate pieces
 	for type in [1,1,1]:
@@ -69,6 +79,10 @@ func _process(_delta):
 
 
 # Signal functions
+func _on_Start_Pressed():
+	# Remove start screen scene
+	remove_child($StartScreen)
+
 func _on_Piece_overBoard(id):
 	# Get signal when piece is over the board.
 	print(str(id) + " Over Board")

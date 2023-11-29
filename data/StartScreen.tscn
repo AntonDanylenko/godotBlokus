@@ -1,0 +1,67 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://art/button_theme.tres" type="Theme" id=1]
+[ext_resource path="res://fonts/Univers Condensed Regular.ttf" type="DynamicFontData" id=2]
+
+[sub_resource type="DynamicFont" id=1]
+size = 200
+font_data = ExtResource( 2 )
+
+[sub_resource type="DynamicFont" id=2]
+size = 64
+font_data = ExtResource( 2 )
+
+[sub_resource type="DynamicFont" id=3]
+size = 50
+font_data = ExtResource( 2 )
+
+[node name="StartScreen" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Background" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="MY BLOKUS" type="Label" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -418.0
+margin_top = 200.0
+margin_right = 418.0
+margin_bottom = 675.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 1 )
+text = "MY
+BLOKUS"
+align = 1
+valign = 1
+
+[node name="Anton Danylenko" type="Label" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -184.0
+margin_top = 80.0
+margin_right = 184.0
+margin_bottom = 156.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 2 )
+text = "Anton Danylenko"
+align = 1
+valign = 1
+
+[node name="StartGameButton" type="Button" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -150.0
+margin_top = 280.0
+margin_right = 150.0
+margin_bottom = 400.0
+rect_min_size = Vector2( 40, 40 )
+theme = ExtResource( 1 )
+custom_fonts/font = SubResource( 3 )
+text = "START GAME"
