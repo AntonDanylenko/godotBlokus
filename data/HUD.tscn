@@ -43,6 +43,7 @@ margin_bottom = 1380.0
 rect_min_size = Vector2( 40, 40 )
 theme = ExtResource( 3 )
 custom_fonts/font = SubResource( 1 )
+disabled = true
 text = "UNDO"
 
 [node name="NextTurnButton" type="Button" parent="."]
@@ -57,4 +58,6 @@ text = "NEXT TURN"
 expand_icon = true
 
 [connection signal="piece_placed" from="." to="Board" method="_on_HUD_piece_placed"]
+[connection signal="piece_undone" from="." to="Board" method="_on_HUD_piece_undone"]
+[connection signal="pressed" from="UndoButton" to="." method="_on_UndoButton_pressed"]
 [connection signal="pressed" from="NextTurnButton" to="." method="_on_NextTurnButton_pressed"]

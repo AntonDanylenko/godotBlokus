@@ -21,8 +21,16 @@ func _ready():
 func _process(_delta):
 	pass
 
+
 # Signal functions
 func _on_HUD_piece_placed(color, location):
+	# Add piece to board
 	board[location.y][location.x] = color
 #	print_board()
 	get_node("PlacedTiles"+color).set_cellv(location,0)
+
+func _on_HUD_piece_undone(color, location):
+	# Remove piece from board
+	board[location.y][location.x] = ""
+#	print_board()
+	get_node("PlacedTiles"+color).set_cellv(location,-1)
