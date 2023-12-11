@@ -35,24 +35,6 @@ __meta__ = {
 
 [node name="PieceTray" parent="." instance=ExtResource( 2 )]
 
-[node name="TrayScroll" type="ScrollContainer" parent="PieceTray"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = 8.0
-margin_top = 8.0
-margin_right = -8.0
-margin_bottom = -8.0
-rect_min_size = Vector2( 864, 224 )
-mouse_filter = 2
-follow_focus = true
-scroll_vertical_enabled = false
-
-[node name="InnerTray" type="HBoxContainer" parent="PieceTray/TrayScroll"]
-margin_right = 864.0
-margin_bottom = 210.0
-rect_min_size = Vector2( 864, 210 )
-mouse_filter = 2
-
 [node name="UndoButton" type="Button" parent="."]
 margin_left = 40.0
 margin_top = 1340.0

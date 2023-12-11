@@ -7,7 +7,6 @@ signal piece_placed(color, location)
 var BOARDGP = null # Board Global Position coordinates (x,y)
 var BOARDSIZE = null # Board Size in pixels (x,y)
 var TILESIZE = null # Tile Size in pixels (x,y)
-var TRAYGP = null # Tray Global Position coordinates (x,y)
 
 var PIECETYPES = [1,1,1] # List of all shapes of pieces
 var PLAYERS = ["Y","R","G","B"] # List of colors denoting the four players
@@ -32,13 +31,32 @@ func _get_nearest_square(piece):
 								clamp(stepify(piecePosition.y-TILESIZE.y/2, TILESIZE.y),0,BOARDSIZE.y-TILESIZE.y))
 	return nearestSquare
 
-func _instantiate_piece(type):
+func _instantiate_tray(player):
+	# Instantiate the starting tray and pieces for a player
+	var trayScroll = ScrollContainer.new()
+	trayScroll.name = "TrayScroll" + player
+	trayScroll.rect_position = Vector2(8,8)
+	trayScroll.rect_size = Vector2(864,224)
+	trayScroll.rect_min_size = Vector2(864,224)
+	trayScroll.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	trayScroll.scroll_vertical_enabled = false
+	$PieceTray.add_child(trayScroll)
+	var innerTray = HBoxContainer.new()
+	innerTray.name = "InnerTray"
+	innerTray.rect_size = Vector2(864,210)
+	innerTray.rect_min_size = Vector2(864,210)
+	innerTray.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	trayScroll.add_child(innerTray)
+	for type in PIECETYPES:
+		_instantiate_piece(type,player)
+
+func _instantiate_piece(type,player):
 	# Instantiate a piece
 	var pieceContainerScene = load("res://data/PieceContainer.tscn")
 	var pieceContainer = pieceContainerScene.instance()
-	$PieceTray/TrayScroll/InnerTray.add_child(pieceContainer)
+	$PieceTray.get_node("TrayScroll"+player).get_node("InnerTray").add_child(pieceContainer)
 	var piece = pieceContainer.get_node("Piece")
-	piece.set_color(curPlayer)
+	piece.set_color(player)
 	# Connect signals
 	piece.connect("pickedup", self, "_on_Piece_pickedup")
 	piece.connect("dropped", self, "_on_Piece_dropped")
@@ -48,7 +66,7 @@ func _instantiate_piece(type):
 	pieceDict[piece] = {}
 	pieceDict[piece]["overBoard"] = false
 	pieceDict[piece]["type"] = type
-	pieceDict[piece]["color"] = curPlayer
+	pieceDict[piece]["color"] = player
 	# Hide piece visibility
 	piece.visible = false
 
@@ -58,18 +76,16 @@ func _ready():
 	BOARDGP = $Board.rect_position
 	BOARDSIZE = $Board.rect_size
 	TILESIZE = $Board/BoardTiles.cell_size * $Board/BoardTiles.scale
-	TRAYGP = $PieceTray/TrayScroll/InnerTray.rect_position
 	
 	# Randomize player order
 	randomize()
 	PLAYERS.shuffle()
 	print(PLAYERS)
 	
-	# Loop through players and instantiate their pieces
+	# Loop through players and instantiate their trays and pieces
 	for color in PLAYERS:
 		curPlayer = color
-		for type in PIECETYPES:
-			_instantiate_piece(type)
+		_instantiate_tray(curPlayer)
 	
 	# Start Game screen
 	var startScreenScene = load("res://data/StartScreen.tscn")
@@ -144,7 +160,7 @@ func _on_Piece_pickedup(id):
 	var pieceContainer = curPiece.get_parent()
 	# Remove piece and pieceContainer from tray and add piece to HUD.
 	pieceContainer.remove_child(curPiece)
-	$PieceTray/TrayScroll/InnerTray.remove_child(pieceContainer)
+	$PieceTray.get_node("TrayScroll"+curPlayer).get_node("InnerTray").remove_child(pieceContainer)
 	add_child(curPiece)
 
 func _on_Piece_dropped(id):
@@ -166,5 +182,5 @@ func _on_Piece_dropped(id):
 		remove_child(id)
 		var type = pieceDict[id]["type"]
 		pieceDict.erase(id)
-		_instantiate_piece(type)
+		_instantiate_piece(type,curPlayer)
 	curPiece = null
