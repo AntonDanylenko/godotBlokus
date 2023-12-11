@@ -10,6 +10,8 @@ var TILESIZE = null # Tile Size in pixels (x,y)
 
 var PIECETYPES = [1,1,1] # List of all shapes of pieces
 var PLAYERS = ["Y","R","G","B"] # List of colors denoting the four players
+var FULLCOLORNAMES = {"Y":"Yellow","R":"Red","G":"Green","B":"Blue"} # Color names expanded
+var HEXCOLORVALUES = {"Y":"e2e152","R":"e41f1f","G":"3fa92e","B":"3d63dd"} # Hexes of colors
 var curPlayer = null # Player whose turn it currently is
 
 var pieceDict = {}	# Dictionary of all piece instances in game
@@ -82,9 +84,18 @@ func _ready():
 	PLAYERS.shuffle()
 	print(PLAYERS)
 	
-	# Loop through players and instantiate their trays and pieces
+	# Loop through players and instantiate the name headers, trays, and pieces
+	var playerLabelScene = load("res://data/HeaderLabel.tscn")
 	for color in PLAYERS:
 		curPlayer = color
+		# Player name header
+		var curPlayerLabel = playerLabelScene.instance()
+		curPlayerLabel.name = "playerHeader" + curPlayer
+		curPlayerLabel.text = FULLCOLORNAMES[curPlayer]
+		curPlayerLabel.set("custom_colors/font_color", Color(HEXCOLORVALUES[curPlayer]))
+		add_child(curPlayerLabel)
+		curPlayerLabel.visible = false
+		# Tray and pieces
 		_instantiate_tray(curPlayer)
 	
 	# Start Game screen
@@ -115,14 +126,17 @@ func _on_Start_Pressed():
 	for piece in pieceDict:
 		if pieceDict[piece]["color"]==curPlayer:
 			piece.visible = true
+	# Unhide header
+	get_node("playerHeader" + curPlayer).visible = true
 	# Remove start screen scene
 	remove_child($StartScreen)
 
 func _on_NextTurnButton_pressed():
-	# Clear tray
+	# Clear tray and header
 	for piece in pieceDict:
 		if pieceDict[piece]["color"]==curPlayer:
 			piece.visible = false
+	get_node("playerHeader" + curPlayer).visible = false
 	
 	# Rotate Board
 	
@@ -138,7 +152,9 @@ func _on_NextTurnButton_pressed():
 		if pieceDict[piece]["color"]==curPlayer:
 			piece.visible = true
 	
-	# Player name popup
+	# Player name header and popup
+	get_node("playerHeader" + curPlayer).visible = true
+	
 
 func _on_Piece_overBoard(id):
 	# Get signal when piece is over the board.
