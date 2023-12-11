@@ -76,6 +76,21 @@ func _instantiate_piece(type,player):
 	piece.visible = false
 	return piece
 
+func _reset_piece_on_tray():
+	# Put piece back into container in tray and center it
+	curContainer.add_child(curPiece)
+	curPiece.get_node("CollisionShape2D").position = Vector2(0,0)
+	curPiece.get_node("Sprite").position = Vector2(0,0)
+	# Make everything visible and reset curPiece variable
+	curContainer.visible = true
+	curPiece.visible = true
+	curPiece = null
+	curContainer = null
+	locationPlaced = null
+	# Disable undo button
+	$UndoButton.disabled = true
+
+
 
 func _ready():
 	# Instantiate globals
@@ -196,48 +211,30 @@ func _on_Piece_pickedup(id):
 	curContainer.visible = false
 	add_child(curPiece)
 
-func _on_Piece_dropped(id):
-	print(str(id) + " Dropped")
+func _on_Piece_dropped():
 	print(str(curPiece) + " Dropped")
 	# Snap piece to nearest tile when dropped over board.
-	if pieceDict[id]["overBoard"]:
+	if pieceDict[curPiece]["overBoard"]:
 		# Remove outline from nearest square.
 		if curSelected != null:
 			$Board/SelectionTiles.set_cellv(curSelected,-1)
 			curSelected = null
 		# Get board coordinate of drop.
-		var nearestSquare = _get_nearest_square(id)
+		var nearestSquare = _get_nearest_square(curPiece)
 		locationPlaced = Vector2(nearestSquare.x/TILESIZE.x, nearestSquare.y/TILESIZE.y)
-		# Center piece, remove it from HUD, and signal board that it has been placed.
-		id.get_node("CollisionShape2D").position = Vector2(0,0)
-		id.get_node("Sprite").position = Vector2(0,0)
-		remove_child(id)
-		emit_signal("piece_placed", id.get_color(), locationPlaced)
+		# Remove piece from HUD, and signal board that it has been placed.
+		remove_child(curPiece)
+		emit_signal("piece_placed", curPiece.get_color(), locationPlaced)
 		# Prepare undo functionality
 		$UndoButton.disabled = false
 		# Restrict tray
 #		$PieceTray.disabled = true
 	# Place piece back on tray if dropped anywhere other than board.
 	else:
-		remove_child(id)
-		# Put piece back into container in tray and center it
-		curContainer.add_child(id)
-		id.get_node("CollisionShape2D").position = Vector2(0,0)
-		id.get_node("Sprite").position = Vector2(0,0)
-		# Make everything visible and reset curPiece variable
-		curContainer.visible = true
-		id.visible = true
-		curPiece = null
-		curContainer = null
-		locationPlaced = null
+		remove_child(curPiece)
+		_reset_piece_on_tray()
 
 func _on_UndoButton_pressed():
 	# Remove recently used piece from board and place back on tray
 	emit_signal("piece_undone", curPiece.get_color(), locationPlaced)
-	curContainer.add_child(curPiece)
-	curContainer.visible = true
-	curPiece.visible = true
-	curPiece = null
-	curContainer = null
-	locationPlaced = null
-	$UndoButton.disabled = true
+	_reset_piece_on_tray()

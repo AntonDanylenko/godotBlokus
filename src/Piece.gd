@@ -3,7 +3,7 @@ extends Area2D
 signal overBoard(id)
 signal notOverBoard(id)
 signal pickedup(id)
-signal dropped(id)
+signal dropped()
 
 # Variables
 var COLORS = {"R":"e41f1f","G":"3fa92e","B":"3d63dd","Y":"e2e152"}
@@ -42,7 +42,7 @@ func _on_Piece_input_event(_viewport, event, _shape_idx):
 #		print("Piece clicked")
 #		print(self)
 		if dragging:
-			emit_signal('dropped', self)
+			emit_signal('dropped')
 		else:
 			emit_signal('pickedup', self)
 		dragging = not dragging
