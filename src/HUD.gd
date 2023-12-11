@@ -4,23 +4,27 @@ signal piece_placed(color, location)
 
 
 # Variables
-var BOARDGP = null
-var BOARDSIZE = null
-var TILESIZE = null
-var TRAYGP = null
+var BOARDGP = null # Board Global Position coordinates (x,y)
+var BOARDSIZE = null # Board Size in pixels (x,y)
+var TILESIZE = null # Tile Size in pixels (x,y)
+var TRAYGP = null # Tray Global Position coordinates (x,y)
 
-var PIECETYPES = [1,1,1]
-var PLAYERS = ["Y","R","G","B"]
-var curPlayer = null
-var playerPiecesDict = {}
+var PIECETYPES = [1,1,1] # List of all shapes of pieces
+var PLAYERS = ["Y","R","G","B"] # List of colors denoting the four players
+var curPlayer = null # Player whose turn it currently is
 
-var pieceDict = {}
-var curPiece = null
-var curSelected = null
+var pieceDict = {}	# Dictionary of all piece instances in game
+					# Keys are piece instance IDs and values are dictionaries with attributes:
+					# overBoard (whether the piece is hovering over the board area)
+					# type (the shape of the piece)
+					# color (the color of player who the piece belongs to)
+var curPiece = null # The current piece being picked up or moved
+var curSelected = null # The current board square closest to the moving piece
+
 
 # Helper functions
 func _get_nearest_square(piece):
-	# Get the relative board location of the square that is nearest the piece.
+	# Get the relative board location of the board square that is nearest the moving piece.
 #	print(piece)
 	var pieceGP = piece.get_node("Sprite").global_position
 	var piecePosition = Vector2(pieceGP.x-BOARDGP.x,pieceGP.y-BOARDGP.y)
@@ -35,14 +39,18 @@ func _instantiate_piece(type):
 	$PieceTray/TrayScroll/InnerTray.add_child(pieceContainer)
 	var piece = pieceContainer.get_node("Piece")
 	piece.set_color(curPlayer)
-	# Connect signals and instantiate pieceDict.
+	# Connect signals
 	piece.connect("pickedup", self, "_on_Piece_pickedup")
 	piece.connect("dropped", self, "_on_Piece_dropped")
 	piece.connect("overBoard", self, "_on_Piece_overBoard")
 	piece.connect("notOverBoard", self, "_on_Piece_notOverBoard")
+	# Instantiate pieceDict
 	pieceDict[piece] = {}
 	pieceDict[piece]["overBoard"] = false
 	pieceDict[piece]["type"] = type
+	pieceDict[piece]["color"] = curPlayer
+	# Hide piece visibility
+	piece.visible = false
 
 
 func _ready():
@@ -51,13 +59,17 @@ func _ready():
 	BOARDSIZE = $Board.rect_size
 	TILESIZE = $Board/BoardTiles.cell_size * $Board/BoardTiles.scale
 	TRAYGP = $PieceTray/TrayScroll/InnerTray.rect_position
+	
 	# Randomize player order
 	randomize()
 	PLAYERS.shuffle()
 	print(PLAYERS)
-	# Instantiate player piece lists
+	
+	# Loop through players and instantiate their pieces
 	for color in PLAYERS:
-		playerPiecesDict[color] = PIECETYPES
+		curPlayer = color
+		for type in PIECETYPES:
+			_instantiate_piece(type)
 	
 	# Start Game screen
 	var startScreenScene = load("res://data/StartScreen.tscn")
@@ -83,11 +95,34 @@ func _process(_delta):
 # Signal functions
 func _on_Start_Pressed():
 	curPlayer = PLAYERS[0]
-	# Instantiate first player pieces
-	for type in playerPiecesDict[curPlayer]:
-		_instantiate_piece(type)
+	# Unhide first player's pieces
+	for piece in pieceDict:
+		if pieceDict[piece]["color"]==curPlayer:
+			piece.visible = true
 	# Remove start screen scene
 	remove_child($StartScreen)
+
+func _on_NextTurnButton_pressed():
+	# Clear tray
+	for piece in pieceDict:
+		if pieceDict[piece]["color"]==curPlayer:
+			piece.visible = false
+	
+	# Rotate Board
+	
+	# Change all cur variables
+	var playerIndex = PLAYERS.find(curPlayer)
+	if playerIndex == len(PLAYERS)-1:
+		curPlayer = PLAYERS[0]
+	else:
+		curPlayer = PLAYERS[playerIndex+1]
+	
+	# Fill tray
+	for piece in pieceDict:
+		if pieceDict[piece]["color"]==curPlayer:
+			piece.visible = true
+	
+	# Player name popup
 
 func _on_Piece_overBoard(id):
 	# Get signal when piece is over the board.

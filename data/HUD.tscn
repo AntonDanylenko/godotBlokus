@@ -75,3 +75,4 @@ text = "NEXT TURN"
 expand_icon = true
 
 [connection signal="piece_placed" from="." to="Board" method="_on_HUD_piece_placed"]
+[connection signal="pressed" from="NextTurnButton" to="." method="_on_NextTurnButton_pressed"]
