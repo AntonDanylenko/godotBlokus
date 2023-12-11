@@ -13,8 +13,8 @@
 	b. Identify player by color.
 	c. List for pieces player has left.
 	d. Make next turn button.
-	e. Place one piece per round.
-		i. Can undo and place another piece.
+	e. Undo button functionality.
+	f. Restrict piece interaction to one per round.
 5. Restrict placement to corners.
 6. Make larger pieces.
 	a. Pieces cant hang off board.

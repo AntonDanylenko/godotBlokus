@@ -166,6 +166,8 @@ func _on_NextTurnButton_pressed():
 		if pieceDict[piece]["color"]==curPlayer:
 			piece.visible = false
 	get_node("playerHeader" + curPlayer).visible = false
+	# Unrestrict tray
+	$PieceTray.get_node("TrayScroll"+curPlayer).get_node("InnerTray").mouse_filter = Control.MOUSE_FILTER_IGNORE
 	
 	# Rotate Board
 	
@@ -228,7 +230,7 @@ func _on_Piece_dropped():
 		# Prepare undo functionality
 		$UndoButton.disabled = false
 		# Restrict tray
-#		$PieceTray.disabled = true
+		$PieceTray.get_node("TrayScroll"+curPlayer).get_node("InnerTray").mouse_filter = Control.MOUSE_FILTER_STOP
 	# Place piece back on tray if dropped anywhere other than board.
 	else:
 		remove_child(curPiece)
@@ -238,3 +240,5 @@ func _on_UndoButton_pressed():
 	# Remove recently used piece from board and place back on tray
 	emit_signal("piece_undone", curPiece.get_color(), locationPlaced)
 	_reset_piece_on_tray()
+	# Unrestrict tray
+	$PieceTray.get_node("TrayScroll"+curPlayer).get_node("InnerTray").mouse_filter = Control.MOUSE_FILTER_IGNORE
