@@ -54,6 +54,7 @@ margin_bottom = 1380.0
 rect_min_size = Vector2( 40, 40 )
 theme = ExtResource( 3 )
 custom_fonts/font = SubResource( 2 )
+disabled = true
 text = "NEXT TURN"
 expand_icon = true
 

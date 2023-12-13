@@ -4,7 +4,6 @@
 	c. Draw outline on square.
 2. Place and snap piece to square it is dropped on.
 3. Add multiple pieces.
-
 4. Add multiple players.
 	a. Add pieces to tray with code.
 		i. Make tray scrollable.
@@ -15,14 +14,21 @@
 	d. Make next turn button.
 	e. Undo button functionality.
 	f. Restrict piece interaction to one per round.
-5. Restrict placement to corners.
-6. Make larger pieces.
+		i. Disable next turn button until piece placed.
+
+5. Rotate board.
+6. Restrict placement to corners.
+	a. Can only place on your corner on first round.
+		i. Rotate board functionality required.
+	b. Can only connect by corners for future rounds.
+	c. Cannot be side to side or overlap with own pieces.
+	d. Cannot overlap other players' pieces.
+7. Make larger pieces.
 	a. Pieces cant hang off board.
 	b. Pieces cant overlap others.
-7. Rotate pieces.
+8. Rotate pieces.
 	a. Matrix multiplication for rotation?
-8. Make sure pieces cant touch by side.
-9. Make all pieces.
-10. Rotate board.
+9. Make sure pieces cant touch by side.
+10. Make all pieces.
 11. Check each turn if no more pieces can be placed and skip player if so.
 

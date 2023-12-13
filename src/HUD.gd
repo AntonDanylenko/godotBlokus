@@ -9,7 +9,8 @@ var BOARDGP = null # Board Global Position coordinates (x,y)
 var BOARDSIZE = null # Board Size in pixels (x,y)
 var TILESIZE = null # Tile Size in pixels (x,y)
 
-var PIECETYPES = [1,1,1] # List of all shapes of pieces
+var PIECETYPES = {1:[[1]],2:[[1],[1]]}	# Dict of all types of pieces with
+										# Keys as piece names and values as piece shapes
 var PLAYERS = ["Y","R","G","B"] # List of colors denoting the four players
 var FULLCOLORNAMES = {"Y":"Yellow","R":"Red","G":"Green","B":"Blue"} # Color names expanded
 var HEXCOLORVALUES = {"Y":"e2e152","R":"e41f1f","G":"3fa92e","B":"3d63dd"} # Hexes of colors
@@ -87,8 +88,9 @@ func _reset_piece_on_tray():
 	curPiece = null
 	curContainer = null
 	locationPlaced = null
-	# Disable undo button
+	# Disable undo and next turn buttons
 	$UndoButton.disabled = true
+	$NextTurnButton.disabled = true
 
 
 
@@ -151,6 +153,10 @@ func _on_Start_Pressed():
 	remove_child($StartScreen)
 
 func _on_NextTurnButton_pressed():
+	# Disable undo and next turn buttons
+	$UndoButton.disabled = true
+	$NextTurnButton.disabled = true
+	
 	# Remove used piece and its container
 	pieceDict.erase(curPiece)
 	if curPiece:
@@ -171,15 +177,13 @@ func _on_NextTurnButton_pressed():
 	
 	# Rotate Board
 	
-	# Change all cur variables
+	# Change curPlayer
 	var playerIndex = PLAYERS.find(curPlayer)
 	if playerIndex == len(PLAYERS)-1:
 		curPlayer = PLAYERS[0]
 	else:
 		curPlayer = PLAYERS[playerIndex+1]
 	
-	# Disable undo button
-	$UndoButton.disabled = true
 	
 	# Fill tray
 	for piece in pieceDict:
@@ -227,8 +231,9 @@ func _on_Piece_dropped():
 		# Remove piece from HUD, and signal board that it has been placed.
 		remove_child(curPiece)
 		emit_signal("piece_placed", curPiece.get_color(), locationPlaced)
-		# Prepare undo functionality
+		# Enable undo and next turn
 		$UndoButton.disabled = false
+		$NextTurnButton.disabled = false
 		# Restrict tray
 		$PieceTray.get_node("TrayScroll"+curPlayer).get_node("InnerTray").mouse_filter = Control.MOUSE_FILTER_STOP
 	# Place piece back on tray if dropped anywhere other than board.
