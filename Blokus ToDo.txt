@@ -15,20 +15,18 @@
 	e. Undo button functionality.
 	f. Restrict piece interaction to one per round.
 		i. Disable next turn button until piece placed.
-
 5. Rotate board.
-6. Restrict placement to corners.
+
+6. Make larger pieces.
+	a. Green tile outlines under every square of piece.
+	b. Pieces cant hang off board.
+7. Restrict piece placement.
 	a. Can only place on your corner on first round.
-		i. Rotate board functionality required.
+		i. Red tile outline when held over other tiles.
 	b. Can only connect by corners for future rounds.
 	c. Cannot be side to side or overlap with own pieces.
 	d. Cannot overlap other players' pieces.
-7. Make larger pieces.
-	a. Pieces cant hang off board.
-	b. Pieces cant overlap others.
 8. Rotate pieces.
-	a. Matrix multiplication for rotation?
-9. Make sure pieces cant touch by side.
-10. Make all pieces.
-11. Check each turn if no more pieces can be placed and skip player if so.
+9. Make all pieces.
+10. Check each turn if no more pieces can be placed and skip player if so.
 

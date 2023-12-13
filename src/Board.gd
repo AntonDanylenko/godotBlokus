@@ -44,17 +44,21 @@ func _process(_delta):
 
 
 # Signal functions
-func _on_HUD_piece_placed(color, location):
+func _on_HUD_piece_placed(color, matrix, location):
 	# Add piece to board
-	board[location.y][location.x] = color
-#	print_board()
-	get_node("PlacedTiles"+color).set_cellv(location,0)
+	for i in range(len(matrix)):
+		for j in range(len(matrix[0])):
+			if matrix[i][j]:
+				board[location.y+i][location.x+j] = color
+				get_node("PlacedTiles"+color).set_cellv(Vector2(location.x+j,location.y+i),0)
 
-func _on_HUD_piece_undone(color, location):
+func _on_HUD_piece_undone(color, matrix, location):
 	# Remove piece from board
-	board[location.y][location.x] = ""
-#	print_board()
-	get_node("PlacedTiles"+color).set_cellv(location,-1)
+	for i in range(len(matrix)):
+		for j in range(len(matrix[0])):
+			if matrix[i][j]:
+				board[location.y+i][location.x+j] = ""
+				get_node("PlacedTiles"+color).set_cellv(Vector2(location.x+j,location.y+i),-1)
 
 func _on_HUD_rotate_board(numTurns):
 	# Rotate board matrix

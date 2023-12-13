@@ -18,8 +18,11 @@ func get_color():
 	return color
 
 func set_color(input):
+	# Set color of all sprites
 	color = input
-	$Sprite.self_modulate = COLORS[color]
+	for child in get_children():
+		if child.get_class() == "Sprite":
+			child.self_modulate = COLORS[color]
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -29,8 +32,7 @@ func _ready():
 func _process(_delta):
 	if dragging:
 		mousePos = get_global_mouse_position()
-		$Sprite.global_position = mousePos
-		$CollisionShape2D.global_position = mousePos
+		self.position = mousePos
 
 
 # Signal functions

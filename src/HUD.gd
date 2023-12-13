@@ -5,13 +5,14 @@ signal piece_undone(color, location)
 signal rotate_board(numTurns)
 
 
-# Variables
+# Global Variables
 var BOARDGP = null # Board Global Position coordinates (x,y)
 var BOARDSIZE = null # Board Size in pixels (x,y)
 var TILESIZE = null # Tile Size in pixels (x,y)
 
-var PIECETYPES = {1:[[1]],2:[[1],[1]]}	# Dict of all types of pieces with
-										# Keys as piece names and values as piece shapes
+# Dict of all types of pieces with keys as piece names and values as piece shapes
+var PIECETYPES = {"3L":[[1,0],[1,1]], "2":[[1],[1]], "1":[[1]]}
+
 var PLAYERS = ["Y","R","G","B"] # List of colors denoting the four players
 var FULLCOLORNAMES = {"Y":"Yellow","R":"Red","G":"Green","B":"Blue"} # Color names expanded
 var HEXCOLORVALUES = {"Y":"e2e152","R":"e41f1f","G":"3fa92e","B":"3d63dd"} # Hexes of colors
@@ -62,8 +63,11 @@ func _instantiate_piece(type,player):
 	var pieceContainerScene = load("res://data/PieceContainer.tscn")
 	var pieceContainer = pieceContainerScene.instance()
 	$PieceTray.get_node("TrayScroll"+player).get_node("InnerTray").add_child(pieceContainer)
+	var matrix = PIECETYPES[type]
+	pieceContainer.rect_min_size = Vector2(TILESIZE.x*(len(matrix[0])+1),TILESIZE.y*(len(matrix)+1))
 	var piece = pieceContainer.get_node("Piece")
 	piece.set_color(player)
+	_create_piece_shape(piece,matrix)
 	# Connect signals
 	piece.connect("pickedup", self, "_on_Piece_pickedup")
 	piece.connect("dropped", self, "_on_Piece_dropped")
@@ -78,11 +82,20 @@ func _instantiate_piece(type,player):
 	piece.visible = false
 	return piece
 
+func _create_piece_shape(piece,matrix):
+	# Creates piece node based off its type
+	var origin = piece.get_node("Sprite").position
+	for i in range(len(matrix)):
+		for j in range(len(matrix[0])):
+			if (i or j) and matrix[i][j]:
+				var new_square = piece.get_node("Sprite").duplicate()
+				piece.add_child(new_square)
+				new_square.position = Vector2(origin.x + j*TILESIZE.x,origin.y + i*TILESIZE.y)
+
 func _reset_piece_on_tray():
 	# Put piece back into container in tray and center it
 	curContainer.add_child(curPiece)
-	curPiece.get_node("CollisionShape2D").position = Vector2(0,0)
-	curPiece.get_node("Sprite").position = Vector2(0,0)
+	curPiece.position = Vector2(TILESIZE.x,TILESIZE.y)
 	# Make everything visible and reset curPiece variable
 	curContainer.visible = true
 	curPiece.visible = true
@@ -232,7 +245,7 @@ func _on_Piece_dropped():
 		locationPlaced = Vector2(nearestSquare.x/TILESIZE.x, nearestSquare.y/TILESIZE.y)
 		# Remove piece from HUD, and signal board that it has been placed.
 		remove_child(curPiece)
-		emit_signal("piece_placed", curPiece.get_color(), locationPlaced)
+		emit_signal("piece_placed", curPiece.get_color(), PIECETYPES[pieceDict[curPiece]["type"]], locationPlaced)
 		# Enable undo and next turn
 		$UndoButton.disabled = false
 		$NextTurnButton.disabled = false
@@ -245,7 +258,7 @@ func _on_Piece_dropped():
 
 func _on_UndoButton_pressed():
 	# Remove recently used piece from board and place back on tray
-	emit_signal("piece_undone", curPiece.get_color(), locationPlaced)
+	emit_signal("piece_undone", curPiece.get_color(), PIECETYPES[pieceDict[curPiece]["type"]], locationPlaced)
 	_reset_piece_on_tray()
 	# Unrestrict tray
 	$PieceTray.get_node("TrayScroll"+curPlayer).get_node("InnerTray").mouse_filter = Control.MOUSE_FILTER_IGNORE
