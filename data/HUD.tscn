@@ -60,5 +60,6 @@ expand_icon = true
 
 [connection signal="piece_placed" from="." to="Board" method="_on_HUD_piece_placed"]
 [connection signal="piece_undone" from="." to="Board" method="_on_HUD_piece_undone"]
+[connection signal="rotate_board" from="." to="Board" method="_on_HUD_rotate_board"]
 [connection signal="pressed" from="UndoButton" to="." method="_on_UndoButton_pressed"]
 [connection signal="pressed" from="NextTurnButton" to="." method="_on_NextTurnButton_pressed"]

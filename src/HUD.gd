@@ -2,6 +2,7 @@ extends Control
 
 signal piece_placed(color, location)
 signal piece_undone(color, location)
+signal rotate_board(numTurns)
 
 
 # Variables
@@ -176,6 +177,7 @@ func _on_NextTurnButton_pressed():
 	$PieceTray.get_node("TrayScroll"+curPlayer).get_node("InnerTray").mouse_filter = Control.MOUSE_FILTER_IGNORE
 	
 	# Rotate Board
+	emit_signal("rotate_board",1)
 	
 	# Change curPlayer
 	var playerIndex = PLAYERS.find(curPlayer)
