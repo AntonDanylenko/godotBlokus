@@ -243,14 +243,19 @@ func _on_Piece_dropped():
 		# Get board coordinate of drop.
 		var nearestSquare = _get_nearest_square(curPiece)
 		locationPlaced = Vector2(nearestSquare.x/TILESIZE.x, nearestSquare.y/TILESIZE.y)
-		# Remove piece from HUD, and signal board that it has been placed.
-		remove_child(curPiece)
-		emit_signal("piece_placed", curPiece.get_color(), PIECETYPES[pieceDict[curPiece]["type"]], locationPlaced)
-		# Enable undo and next turn
-		$UndoButton.disabled = false
-		$NextTurnButton.disabled = false
-		# Restrict tray
-		$PieceTray.get_node("TrayScroll"+curPlayer).get_node("InnerTray").mouse_filter = Control.MOUSE_FILTER_STOP
+		# Check if can place
+		if $Board.can_place(curPiece.get_color(), PIECETYPES[pieceDict[curPiece]["type"]], locationPlaced):
+			# Remove piece from HUD, and signal board that it has been placed.
+			remove_child(curPiece)
+			emit_signal("piece_placed", curPiece.get_color(), PIECETYPES[pieceDict[curPiece]["type"]], locationPlaced)
+			# Enable undo and next turn
+			$UndoButton.disabled = false
+			$NextTurnButton.disabled = false
+			# Restrict tray
+			$PieceTray.get_node("TrayScroll"+curPlayer).get_node("InnerTray").mouse_filter = Control.MOUSE_FILTER_STOP
+		else:
+			remove_child(curPiece)
+			_reset_piece_on_tray()
 	# Place piece back on tray if dropped anywhere other than board.
 	else:
 		remove_child(curPiece)

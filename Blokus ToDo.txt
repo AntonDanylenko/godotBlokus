@@ -20,6 +20,7 @@
 6. Make larger pieces.
 	a. Green tile outlines under every square of piece.
 	b. Pieces cant hang off board.
+	c. Make picking up pieces easier.
 7. Restrict piece placement.
 	a. Can only place on your corner on first round.
 		i. Red tile outline when held over other tiles.

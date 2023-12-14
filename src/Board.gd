@@ -29,6 +29,24 @@ func _redraw_tilemap(color):
 			elif board[i][j] != color  and get_node("PlacedTiles"+color).get_cell(j,i) != -1:
 				get_node("PlacedTiles"+color).set_cellv(Vector2(j,i),-1)
 
+func can_place(color, matrix, location):
+	# Check if piece can be placed
+	for i in range(len(matrix)):
+		for j in range(len(matrix[0])):
+			if matrix[i][j]:
+				var board_i = location.y+i
+				var board_j = location.x+j
+				# Check if piece out of board bounds, 
+				# overlaps another piece, 
+				# or sides a piece of same color
+				if (board_i>=len(board) or board_j>=len(board[0]) or
+					board[board_i][board_j] != "" or
+					(board_i-1>=0 and board[board_i-1][board_j] == color) or 
+					(board_j-1>=0 and board[board_i][board_j-1] == color) or
+					(board_i+1<len(board) and board[board_i+1][board_j] == color) or 
+					(board_j+1<len(board[0]) and board[board_i][board_j+1] == color)):
+						return false
+	return true
 
 
 func _ready():
