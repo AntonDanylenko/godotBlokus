@@ -11,7 +11,13 @@ var BOARDSIZE = null # Board Size in pixels (x,y)
 var TILESIZE = null # Tile Size in pixels (x,y)
 
 # Dict of all types of pieces with keys as piece names and values as piece shapes
-var PIECETYPES = {"3L":[[1,0],[1,1]], "2":[[1],[1]], "1":[[1]]}
+var PIECETYPES = {"5I":[[1],[1],[1],[1],[1]],"5L":[[1,0],[1,0],[1,0],[1,1]],"5Y":[[1,0],[1,1],[1,0],[1,0]],
+					"5N":[[1,0],[1,1],[0,1],[0,1]],"5T":[[1,1,1],[0,1,0],[0,1,0]],"5V":[[1,0,0],[1,0,0],[1,1,1]],
+					"5W":[[1,0,0],[1,1,0],[0,1,1]],"5X":[[0,1,0],[1,1,1],[0,1,0]],"5Z":[[1,1,0],[0,1,0],[0,1,1]],
+					"5F":[[1,1,0],[0,1,1],[0,1,0]],"5U":[[1,1],[0,1],[1,1]],"5P":[[1,1],[1,1],[1,0]],
+					"4I":[[1],[1],[1],[1]],"4L":[[1,0],[1,0],[1,1]],"4S":[[1,0],[1,1],[0,1]],
+					"4T":[[1,0],[1,1],[1,0]],"4Q":[[1,1],[1,1]],
+					"3I":[[1],[1],[1]],"3L":[[1,0],[1,1]], "2":[[1],[1]], "1":[[1]]}
 
 var PLAYERS = ["Y","R","G","B"] # List of colors denoting the four players
 var FULLCOLORNAMES = {"Y":"Yellow","R":"Red","G":"Green","B":"Blue"} # Color names expanded
@@ -44,19 +50,20 @@ func _instantiate_tray(player):
 	var trayScroll = ScrollContainer.new()
 	trayScroll.name = "TrayScroll" + player
 	trayScroll.rect_position = Vector2(8,8)
-	trayScroll.rect_size = Vector2(864,224)
-	trayScroll.rect_min_size = Vector2(864,224)
+	trayScroll.rect_size = Vector2(864,284)
+	trayScroll.rect_min_size = Vector2(864,284)
 	trayScroll.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	trayScroll.scroll_vertical_enabled = false
 	$PieceTray.add_child(trayScroll)
 	var innerTray = HBoxContainer.new()
 	innerTray.name = "InnerTray"
-	innerTray.rect_size = Vector2(864,210)
-	innerTray.rect_min_size = Vector2(864,210)
+	innerTray.rect_size = Vector2(864,270)
+	innerTray.rect_min_size = Vector2(864,270)
 	innerTray.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	trayScroll.add_child(innerTray)
 	for type in PIECETYPES:
 		_instantiate_piece(type,player)
+	trayScroll.visible = false
 
 func _instantiate_piece(type,player):
 	# Instantiate a piece
@@ -165,6 +172,7 @@ func _on_Start_Pressed():
 	for piece in pieceDict:
 		if pieceDict[piece]["color"]==curPlayer:
 			piece.visible = true
+	$PieceTray.get_node("TrayScroll"+curPlayer).visible = true
 	# Unhide header
 	get_node("playerHeader" + curPlayer).visible = true
 	# Remove start screen scene
@@ -189,9 +197,8 @@ func _on_NextTurnButton_pressed():
 	for piece in pieceDict:
 		if pieceDict[piece]["color"]==curPlayer:
 			piece.visible = false
+	$PieceTray.get_node("TrayScroll"+curPlayer).visible = false
 	get_node("playerHeader" + curPlayer).visible = false
-	# Unrestrict tray
-	$PieceTray.get_node("TrayScroll"+curPlayer).get_node("InnerTray").mouse_filter = Control.MOUSE_FILTER_IGNORE
 	
 	# Rotate Board
 	emit_signal("rotate_board",1)
@@ -208,6 +215,10 @@ func _on_NextTurnButton_pressed():
 	for piece in pieceDict:
 		if pieceDict[piece]["color"]==curPlayer:
 			piece.visible = true
+	$PieceTray.get_node("TrayScroll"+curPlayer).visible = true
+	
+	# Unrestrict tray
+	$PieceTray.get_node("TrayScroll"+curPlayer).get_node("InnerTray").mouse_filter = Control.MOUSE_FILTER_IGNORE
 	
 	# Player name header and popup
 	get_node("playerHeader" + curPlayer).visible = true
