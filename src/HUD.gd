@@ -215,20 +215,20 @@ func _on_NextTurnButton_pressed():
 
 func _on_Piece_overBoard(id):
 	# Get signal when piece is over the board.
-	print(str(id) + " Over Board")
+#	print(str(id) + " Over Board")
 	pieceDict[id]["overBoard"] = true
 	if curSelected != null:
 		$Board/SelectionTiles.set_cellv(curSelected,0)
 
 func _on_Piece_notOverBoard(id):
 	# Get signal when piece has left the board.
-	print(str(id) + " Left Board")
+#	print(str(id) + " Left Board")
 	pieceDict[id]["overBoard"] = false
 	if curSelected!=null:
 		$Board/SelectionTiles.set_cellv(curSelected,-1)
 	
 func _on_Piece_pickedup(id):
-	print(str(id) + " Picked Up")
+#	print(str(id) + " Picked Up")
 	curPiece = id
 	curContainer = curPiece.get_parent()
 	# Remove piece from tray and add to HUD.
@@ -237,7 +237,7 @@ func _on_Piece_pickedup(id):
 	add_child(curPiece)
 
 func _on_Piece_dropped():
-	print(str(curPiece) + " Dropped")
+#	print(str(curPiece) + " Dropped")
 	# Snap piece to nearest tile when dropped over board.
 	if pieceDict[curPiece]["overBoard"]:
 		# Remove outline from nearest square.

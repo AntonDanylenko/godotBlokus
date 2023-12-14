@@ -30,7 +30,9 @@ func _redraw_tilemap(color):
 				get_node("PlacedTiles"+color).set_cellv(Vector2(j,i),-1)
 
 func can_place(color, matrix, location):
-	# Check if piece can be placed
+	# Check if piece can be placed in location
+	# Boolean for whether piece is touching at least one corner of its own color
+	var cornering = false
 	for i in range(len(matrix)):
 		for j in range(len(matrix[0])):
 			if matrix[i][j]:
@@ -46,7 +48,13 @@ func can_place(color, matrix, location):
 					(board_i+1<len(board) and board[board_i+1][board_j] == color) or 
 					(board_j+1<len(board[0]) and board[board_i][board_j+1] == color)):
 						return false
-	return true
+				elif ((board_i==len(board)-1 and board_j==0) or 
+					(board_i-1>=0 and board_j-1>=0 and board[board_i-1][board_j-1] == color) or 
+					(board_i-1>=0 and board_j+1<len(board[0]) and board[board_i-1][board_j+1] == color) or
+					(board_i+1<len(board) and board_j-1>=0 and board[board_i+1][board_j-1] == color) or 
+					(board_i+1<len(board) and board_j+1<len(board[0]) and board[board_i+1][board_j+1] == color)):
+						cornering = true
+	return cornering
 
 
 func _ready():

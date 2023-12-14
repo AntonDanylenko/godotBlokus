@@ -18,15 +18,18 @@
 5. Rotate board.
 6. Make larger pieces.
 	a. Pieces cant hang off board.
-
 7. Restrict piece placement.
 	a. Can only place on your corner on first round.
 		i. Red tile outline when held over other tiles.
 	b. Can only connect by corners for future rounds.
 	c. Cannot be side to side or overlap with own pieces.
 	d. Cannot overlap other players' pieces.
-8. Rotate pieces.
-9. Make all pieces.
+
+8. Make all pieces.
+9. Rotate pieces.
+	a. Clockwise and counter
+	b. Shortcut keys
+	c. Flip
 10. Check each turn if no more pieces can be placed and skip player if so.
 
 
