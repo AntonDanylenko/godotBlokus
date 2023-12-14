@@ -151,6 +151,10 @@ func _process(_delta):
 			if curSelected != null:
 				$Board/SelectionTiles.set_cellv(curSelected,-1)
 			$Board/SelectionTiles.set_cellv(nearestIndex,0)
+			if $Board.can_place(curPiece.get_color(), PIECETYPES[pieceDict[curPiece]["type"]], nearestIndex):
+				$Board/SelectionTiles.modulate = Color("#a8e61d")
+			else:
+				$Board/SelectionTiles.modulate = Color("#ff4d4d")
 			curSelected = nearestIndex
 
 

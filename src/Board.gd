@@ -26,7 +26,7 @@ func _redraw_tilemap(color):
 		for j in range(len(board[0])):
 			if board[i][j] == color and get_node("PlacedTiles"+color).get_cell(j,i) != 0:
 				get_node("PlacedTiles"+color).set_cellv(Vector2(j,i),0)
-			elif board[i][j] != color  and get_node("PlacedTiles"+color).get_cell(j,i) != -1:
+			elif board[i][j] != color and get_node("PlacedTiles"+color).get_cell(j,i) != -1:
 				get_node("PlacedTiles"+color).set_cellv(Vector2(j,i),-1)
 
 func can_place(color, matrix, location):
