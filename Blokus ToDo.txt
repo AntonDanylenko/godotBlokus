@@ -24,8 +24,8 @@
 	b. Can only connect by corners for future rounds.
 	c. Cannot be side to side or overlap with own pieces.
 	d. Cannot overlap other players' pieces.
-
 8. Make all pieces.
+
 9. Rotate pieces.
 	a. Clockwise and counter
 	b. Shortcut keys

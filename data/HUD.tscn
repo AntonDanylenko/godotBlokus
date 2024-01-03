@@ -1,10 +1,13 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://data/Board.tscn" type="PackedScene" id=1]
 [ext_resource path="res://data/PieceTray.tscn" type="PackedScene" id=2]
 [ext_resource path="res://art/button_theme.tres" type="Theme" id=3]
 [ext_resource path="res://src/HUD.gd" type="Script" id=4]
 [ext_resource path="res://fonts/Univers Condensed Regular.ttf" type="DynamicFontData" id=5]
+[ext_resource path="res://art/rotate-left.png" type="Texture" id=6]
+[ext_resource path="res://art/rotate-right.png" type="Texture" id=7]
+[ext_resource path="res://art/flip-icon.png" type="Texture" id=8]
 
 [sub_resource type="DynamicFont" id=1]
 size = 30
@@ -58,8 +61,39 @@ disabled = true
 text = "NEXT TURN"
 expand_icon = true
 
+[node name="LeftRotateButton" type="Button" parent="."]
+margin_left = 400.0
+margin_top = 1340.0
+margin_right = 440.0
+margin_bottom = 1380.0
+theme = ExtResource( 3 )
+icon = ExtResource( 6 )
+icon_align = 1
+expand_icon = true
+
+[node name="RightRotateButton" type="Button" parent="."]
+margin_left = 520.0
+margin_top = 1340.0
+margin_right = 560.0
+margin_bottom = 1380.0
+theme = ExtResource( 3 )
+icon = ExtResource( 7 )
+icon_align = 1
+expand_icon = true
+
+[node name="FlipButton" type="Button" parent="."]
+margin_left = 460.0
+margin_top = 1340.0
+margin_right = 500.0
+margin_bottom = 1380.0
+theme = ExtResource( 3 )
+icon = ExtResource( 8 )
+icon_align = 1
+expand_icon = true
+
 [connection signal="piece_placed" from="." to="Board" method="_on_HUD_piece_placed"]
 [connection signal="piece_undone" from="." to="Board" method="_on_HUD_piece_undone"]
 [connection signal="rotate_board" from="." to="Board" method="_on_HUD_rotate_board"]
 [connection signal="pressed" from="UndoButton" to="." method="_on_UndoButton_pressed"]
 [connection signal="pressed" from="NextTurnButton" to="." method="_on_NextTurnButton_pressed"]
+[connection signal="pressed" from="LeftRotateButton" to="." method="_on_LeftRotateButton_pressed"]

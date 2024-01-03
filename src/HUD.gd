@@ -39,7 +39,7 @@ var curSelected = null # The current board square closest to the moving piece
 func _get_nearest_square(piece):
 	# Get the relative board location of the board square that is nearest the moving piece.
 #	print(piece)
-	var pieceGP = piece.get_node("Sprite").global_position
+	var pieceGP = piece.get_node("CollisionShape2D").global_position
 	var piecePosition = Vector2(pieceGP.x-BOARDGP.x,pieceGP.y-BOARDGP.y)
 	var nearestSquare = Vector2(clamp(stepify(piecePosition.x-TILESIZE.x/2, TILESIZE.x),0,BOARDSIZE.x-TILESIZE.x),
 								clamp(stepify(piecePosition.y-TILESIZE.y/2, TILESIZE.y),0,BOARDSIZE.y-TILESIZE.y))
@@ -91,13 +91,20 @@ func _instantiate_piece(type,player):
 
 func _create_piece_shape(piece,matrix):
 	# Creates piece node based off its type
-	var origin = piece.get_node("Sprite").position
+	var origin = piece.get_node("CollisionShape2D").position
+	var origin_established = false
 	for i in range(len(matrix)):
 		for j in range(len(matrix[0])):
-			if (i or j) and matrix[i][j]:
-				var new_square = piece.get_node("Sprite").duplicate()
-				piece.add_child(new_square)
-				new_square.position = Vector2(origin.x + j*TILESIZE.x,origin.y + i*TILESIZE.y)
+			if matrix[i][j]:
+				# Shift origin piece if no square in top left corner of piece
+				if not origin_established:
+#					piece.get_node("CollisionShape2D").position = Vector2(origin.x + j*TILESIZE.x,origin.y + i*TILESIZE.y)
+					piece.get_node("Sprite").position = Vector2(origin.x + j*TILESIZE.x,origin.y + i*TILESIZE.y)
+					origin_established = true
+				else:
+					var new_square = piece.get_node("Sprite").duplicate()
+					piece.add_child(new_square)
+					new_square.position = Vector2(origin.x + j*TILESIZE.x,origin.y + i*TILESIZE.y)
 
 func _reset_piece_on_tray():
 	# Put piece back into container in tray and center it
@@ -246,6 +253,10 @@ func _on_Piece_pickedup(id):
 	curContainer.remove_child(curPiece)
 	curContainer.visible = false
 	add_child(curPiece)
+	# Enable rotate and flip buttons
+	$LeftRotateButton.disabled = false
+	$RightRotateButton.disabled = false
+	$FlipButton.disabled = false
 
 func _on_Piece_dropped():
 #	print(str(curPiece) + " Dropped")
@@ -282,3 +293,7 @@ func _on_UndoButton_pressed():
 	_reset_piece_on_tray()
 	# Unrestrict tray
 	$PieceTray.get_node("TrayScroll"+curPlayer).get_node("InnerTray").mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+
+func _on_LeftRotateButton_pressed():
+	pass # Replace with function body.
