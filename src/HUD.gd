@@ -27,7 +27,7 @@ var curPlayer = null # Player whose turn it currently is
 var pieceDict = {}	# Dictionary of all piece instances in game
 					# Keys are piece instance IDs and values are dictionaries with attributes:
 					# overBoard (whether the piece is hovering over the board area)
-					# type (the shape of the piece)
+					# type_matrix (the matrix of the shape of the piece)
 					# color (the color of player who the piece belongs to)
 var curPiece = null # The current piece being picked up or moved
 var curContainer = null # The container of the curPiece in the tray
@@ -44,6 +44,47 @@ func _get_nearest_square(piece):
 	var nearestSquare = Vector2(clamp(stepify(piecePosition.x-TILESIZE.x/2, TILESIZE.x),0,BOARDSIZE.x-TILESIZE.x),
 								clamp(stepify(piecePosition.y-TILESIZE.y/2, TILESIZE.y),0,BOARDSIZE.y-TILESIZE.y))
 	return nearestSquare
+
+func _rotate_piece(direction):
+	# Rotate the piece matrix 90 degrees in the direction given.
+	var type_matrix = pieceDict[curPiece]["type_matrix"]
+	var new_type_matrix = []
+	for i in range(len(type_matrix[0])):
+		var row = []
+		for j in range(len(type_matrix)):
+			if direction=="counterclockwise":
+				row.append(type_matrix[j][len(type_matrix[0]) - i - 1])
+			elif direction=="clockwise":
+				row.append(type_matrix[len(type_matrix) - j - 1][i])
+		new_type_matrix.append(row)
+	type_matrix=new_type_matrix
+	return type_matrix
+
+func _flip_piece():
+	# Flip the piece matrix horizontally.
+	var type_matrix = pieceDict[curPiece]["type_matrix"]
+	var new_type_matrix = []
+	for i in range(len(type_matrix)):
+		var row = []
+		for j in range(len(type_matrix[0])):
+			row.append(type_matrix[i][len(type_matrix[0])-j-1])
+		new_type_matrix.append(row)
+	type_matrix=new_type_matrix
+	return type_matrix
+
+func _reposition_sprites(type_matrix):
+	# Reposition sprites based on new type_matrix
+	var origin = curPiece.get_node("CollisionShape2D").position
+	var sprites = []
+	for child in curPiece.get_children():
+		if child.get_class() == "Sprite":
+			sprites.append(child)
+	var index = 0
+	for i in range(len(type_matrix)):
+		for j in range(len(type_matrix[0])):
+			if type_matrix[i][j]:
+				sprites[index].position = Vector2(origin.x + j*TILESIZE.x,origin.y + i*TILESIZE.y)
+				index+=1
 
 func _instantiate_tray(player):
 	# Instantiate the starting tray and pieces for a player
@@ -70,11 +111,11 @@ func _instantiate_piece(type,player):
 	var pieceContainerScene = load("res://data/PieceContainer.tscn")
 	var pieceContainer = pieceContainerScene.instance()
 	$PieceTray.get_node("TrayScroll"+player).get_node("InnerTray").add_child(pieceContainer)
-	var matrix = PIECETYPES[type]
-	pieceContainer.rect_min_size = Vector2(TILESIZE.x*(len(matrix[0])+1),TILESIZE.y*(len(matrix)+1))
+	var type_matrix = PIECETYPES[type]
+	pieceContainer.rect_min_size = Vector2(TILESIZE.x*(len(type_matrix[0])+1),TILESIZE.y*(len(type_matrix)+1))
 	var piece = pieceContainer.get_node("Piece")
 	piece.set_color(player)
-	_create_piece_shape(piece,matrix)
+	_create_piece_shape(piece,type_matrix)
 	# Connect signals
 	piece.connect("pickedup", self, "_on_Piece_pickedup")
 	piece.connect("dropped", self, "_on_Piece_dropped")
@@ -83,19 +124,19 @@ func _instantiate_piece(type,player):
 	# Instantiate pieceDict
 	pieceDict[piece] = {}
 	pieceDict[piece]["overBoard"] = false
-	pieceDict[piece]["type"] = type
+	pieceDict[piece]["type_matrix"] = type_matrix
 	pieceDict[piece]["color"] = player
 	# Hide piece visibility
 	piece.visible = false
 	return piece
 
-func _create_piece_shape(piece,matrix):
-	# Creates piece node based off its type
+func _create_piece_shape(piece,type_matrix):
+	# Creates piece node based off its type_matrix
 	var origin = piece.get_node("CollisionShape2D").position
 	var origin_established = false
-	for i in range(len(matrix)):
-		for j in range(len(matrix[0])):
-			if matrix[i][j]:
+	for i in range(len(type_matrix)):
+		for j in range(len(type_matrix[0])):
+			if type_matrix[i][j]:
 				# Shift origin piece if no square in top left corner of piece
 				if not origin_established:
 #					piece.get_node("CollisionShape2D").position = Vector2(origin.x + j*TILESIZE.x,origin.y + i*TILESIZE.y)
@@ -109,6 +150,8 @@ func _create_piece_shape(piece,matrix):
 func _reset_piece_on_tray():
 	# Put piece back into container in tray and center it
 	curContainer.add_child(curPiece)
+	var type_matrix = pieceDict[curPiece]["type_matrix"]
+	curContainer.rect_min_size = Vector2(TILESIZE.x*(len(type_matrix[0])+1),TILESIZE.y*(len(type_matrix)+1))
 	curPiece.position = Vector2(TILESIZE.x,TILESIZE.y)
 	# Make everything visible and reset curPiece variable
 	curContainer.visible = true
@@ -165,7 +208,7 @@ func _process(_delta):
 			if curSelected != null:
 				$Board/SelectionTiles.set_cellv(curSelected,-1)
 			$Board/SelectionTiles.set_cellv(nearestIndex,0)
-			if $Board.can_place(curPiece.get_color(), PIECETYPES[pieceDict[curPiece]["type"]], nearestIndex):
+			if $Board.can_place(curPiece.get_color(), pieceDict[curPiece]["type_matrix"], nearestIndex):
 				$Board/SelectionTiles.modulate = Color("#a8e61d")
 			else:
 				$Board/SelectionTiles.modulate = Color("#ff4d4d")
@@ -270,10 +313,10 @@ func _on_Piece_dropped():
 		var nearestSquare = _get_nearest_square(curPiece)
 		locationPlaced = Vector2(nearestSquare.x/TILESIZE.x, nearestSquare.y/TILESIZE.y)
 		# Check if can place
-		if $Board.can_place(curPiece.get_color(), PIECETYPES[pieceDict[curPiece]["type"]], locationPlaced):
+		if $Board.can_place(curPiece.get_color(), pieceDict[curPiece]["type_matrix"], locationPlaced):
 			# Remove piece from HUD, and signal board that it has been placed.
 			remove_child(curPiece)
-			emit_signal("piece_placed", curPiece.get_color(), PIECETYPES[pieceDict[curPiece]["type"]], locationPlaced)
+			emit_signal("piece_placed", curPiece.get_color(), pieceDict[curPiece]["type_matrix"], locationPlaced)
 			# Enable undo and next turn
 			$UndoButton.disabled = false
 			$NextTurnButton.disabled = false
@@ -289,11 +332,31 @@ func _on_Piece_dropped():
 
 func _on_UndoButton_pressed():
 	# Remove recently used piece from board and place back on tray
-	emit_signal("piece_undone", curPiece.get_color(), PIECETYPES[pieceDict[curPiece]["type"]], locationPlaced)
+	emit_signal("piece_undone", curPiece.get_color(), pieceDict[curPiece]["type_matrix"], locationPlaced)
 	_reset_piece_on_tray()
 	# Unrestrict tray
 	$PieceTray.get_node("TrayScroll"+curPlayer).get_node("InnerTray").mouse_filter = Control.MOUSE_FILTER_IGNORE
 
-
 func _on_LeftRotateButton_pressed():
-	pass # Replace with function body.
+	if !curPiece:
+		push_error("Can't rotate without existing curPiece.")
+	# Rotate matrix
+	pieceDict[curPiece]["type_matrix"] = _rotate_piece("counterclockwise")
+	# Rotate sprites
+	_reposition_sprites(pieceDict[curPiece]["type_matrix"])
+
+func _on_RightRotateButton_pressed():
+	if !curPiece:
+		push_error("Can't rotate without existing curPiece.")
+	# Rotate matrix
+	pieceDict[curPiece]["type_matrix"] = _rotate_piece("clockwise")
+	# Rotate sprites
+	_reposition_sprites(pieceDict[curPiece]["type_matrix"])
+
+func _on_FlipButton_pressed():
+	if !curPiece:
+		push_error("Can't flip without existing curPiece.")
+	# Flip matrix
+	pieceDict[curPiece]["type_matrix"] = _flip_piece()
+	# Flip sprites
+	_reposition_sprites(pieceDict[curPiece]["type_matrix"])

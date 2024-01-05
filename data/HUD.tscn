@@ -97,3 +97,5 @@ expand_icon = true
 [connection signal="pressed" from="UndoButton" to="." method="_on_UndoButton_pressed"]
 [connection signal="pressed" from="NextTurnButton" to="." method="_on_NextTurnButton_pressed"]
 [connection signal="pressed" from="LeftRotateButton" to="." method="_on_LeftRotateButton_pressed"]
+[connection signal="pressed" from="RightRotateButton" to="." method="_on_RightRotateButton_pressed"]
+[connection signal="pressed" from="FlipButton" to="." method="_on_FlipButton_pressed"]
