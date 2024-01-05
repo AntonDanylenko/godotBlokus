@@ -33,6 +33,7 @@ var curPiece = null # The current piece being picked up or moved
 var curContainer = null # The container of the curPiece in the tray
 var locationPlaced = null # Location where curPiece was placed
 var curSelected = null # The current board square closest to the moving piece
+var canPress = true # Whether any of the rotation buttons can be pressed
 
 
 # Helper functions
@@ -198,6 +199,23 @@ func _ready():
 
 
 func _process(_delta):
+	# Keybinds for piece rotations.
+	if Input.is_action_pressed("Rotate Left"):
+		if canPress:
+			_on_LeftRotateButton_pressed()
+			canPress = false
+			$ButtonTimer.start()
+	if Input.is_action_pressed("Rotate Right"):
+		if canPress:
+			_on_RightRotateButton_pressed()
+			canPress = false
+			$ButtonTimer.start()
+	if Input.is_action_pressed("Flip"):
+		if canPress:
+			_on_FlipButton_pressed()
+			canPress = false
+			$ButtonTimer.start()
+	
 	# Draw green outline around nearest square to piece.
 	if curPiece!=null and pieceDict[curPiece]["overBoard"]:
 		var nearestSquare = _get_nearest_square(curPiece)
@@ -338,25 +356,26 @@ func _on_UndoButton_pressed():
 	$PieceTray.get_node("TrayScroll"+curPlayer).get_node("InnerTray").mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 func _on_LeftRotateButton_pressed():
-	if !curPiece:
-		push_error("Can't rotate without existing curPiece.")
-	# Rotate matrix
-	pieceDict[curPiece]["type_matrix"] = _rotate_piece("counterclockwise")
-	# Rotate sprites
-	_reposition_sprites(pieceDict[curPiece]["type_matrix"])
+	if curPiece:
+		# Rotate matrix
+		pieceDict[curPiece]["type_matrix"] = _rotate_piece("counterclockwise")
+		# Rotate sprites
+		_reposition_sprites(pieceDict[curPiece]["type_matrix"])
 
 func _on_RightRotateButton_pressed():
-	if !curPiece:
-		push_error("Can't rotate without existing curPiece.")
-	# Rotate matrix
-	pieceDict[curPiece]["type_matrix"] = _rotate_piece("clockwise")
-	# Rotate sprites
-	_reposition_sprites(pieceDict[curPiece]["type_matrix"])
+	if curPiece:
+		# Rotate matrix
+		pieceDict[curPiece]["type_matrix"] = _rotate_piece("clockwise")
+		# Rotate sprites
+		_reposition_sprites(pieceDict[curPiece]["type_matrix"])
 
 func _on_FlipButton_pressed():
-	if !curPiece:
-		push_error("Can't flip without existing curPiece.")
-	# Flip matrix
-	pieceDict[curPiece]["type_matrix"] = _flip_piece()
-	# Flip sprites
-	_reposition_sprites(pieceDict[curPiece]["type_matrix"])
+	if curPiece:
+		# Flip matrix
+		pieceDict[curPiece]["type_matrix"] = _flip_piece()
+		# Flip sprites
+		_reposition_sprites(pieceDict[curPiece]["type_matrix"])
+
+
+func _on_ButtonTimer_timeout():
+	canPress = true

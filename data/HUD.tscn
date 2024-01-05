@@ -91,6 +91,9 @@ icon = ExtResource( 8 )
 icon_align = 1
 expand_icon = true
 
+[node name="ButtonTimer" type="Timer" parent="."]
+wait_time = 0.2
+
 [connection signal="piece_placed" from="." to="Board" method="_on_HUD_piece_placed"]
 [connection signal="piece_undone" from="." to="Board" method="_on_HUD_piece_undone"]
 [connection signal="rotate_board" from="." to="Board" method="_on_HUD_rotate_board"]
@@ -99,3 +102,4 @@ expand_icon = true
 [connection signal="pressed" from="LeftRotateButton" to="." method="_on_LeftRotateButton_pressed"]
 [connection signal="pressed" from="RightRotateButton" to="." method="_on_RightRotateButton_pressed"]
 [connection signal="pressed" from="FlipButton" to="." method="_on_FlipButton_pressed"]
+[connection signal="timeout" from="ButtonTimer" to="." method="_on_ButtonTimer_timeout"]
