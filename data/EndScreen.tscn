@@ -1,0 +1,99 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://fonts/Univers Condensed Regular.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://art/button_theme.tres" type="Theme" id=2]
+
+[sub_resource type="Theme" id=1]
+
+[sub_resource type="DynamicFont" id=2]
+resource_local_to_scene = true
+size = 50
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=6]
+size = 100
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=7]
+size = 50
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=4]
+size = 50
+font_data = ExtResource( 1 )
+
+[node name="EndScreen" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Panel" type="Panel" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -300.0
+margin_top = -520.0
+margin_right = 300.0
+margin_bottom = 480.0
+theme = SubResource( 1 )
+
+[node name="ColorRect" type="ColorRect" parent="Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="GAME OVER" type="Label" parent="Panel"]
+anchor_right = 1.0
+margin_bottom = 100.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 2 )
+text = "GAME OVER"
+align = 1
+valign = 1
+
+[node name="WINNER" type="RichTextLabel" parent="Panel"]
+anchor_right = 1.0
+margin_top = 100.0
+margin_bottom = 220.0
+rect_clip_content = false
+custom_colors/default_color = Color( 0, 0, 0, 1 )
+custom_fonts/normal_font = SubResource( 6 )
+bbcode_enabled = true
+bbcode_text = "[center]WINS[/center]"
+text = "WINS"
+scroll_active = false
+
+[node name="Scores" type="RichTextLabel" parent="Panel"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -300.0
+margin_top = -125.0
+margin_right = 300.0
+margin_bottom = 125.0
+custom_colors/default_color = Color( 0, 0, 0, 1 )
+custom_fonts/normal_font = SubResource( 7 )
+bbcode_enabled = true
+bbcode_text = "[center]R:
+G:
+B:
+Y:[/center]"
+text = "R:
+G:
+B:
+Y:"
+scroll_active = false
+
+[node name="NewGameButton" type="Button" parent="Panel"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -150.0
+margin_top = -160.0
+margin_right = 150.0
+margin_bottom = -40.0
+rect_min_size = Vector2( 40, 40 )
+theme = ExtResource( 2 )
+custom_fonts/font = SubResource( 4 )
+text = "NEW GAME"

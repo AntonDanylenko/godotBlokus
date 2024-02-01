@@ -30,7 +30,7 @@ func _redraw_tilemap(color):
 				get_node("PlacedTiles"+color).set_cellv(Vector2(j,i),-1)
 
 func can_place(color, matrix, location):
-	# Check if piece can be placed in location
+	# Check if piece can be placed in location.
 	# Boolean for whether piece is touching at least one corner of its own color
 	var cornering = false
 	for i in range(len(matrix)):
@@ -56,6 +56,14 @@ func can_place(color, matrix, location):
 						cornering = true
 	return cornering
 
+func can_place_anywhere(color, matrix):
+	# Check if piece can be placed anywhere on the board.
+	for i in range(len(board)):
+		for j in range(len(board[0])):
+			if (board[i][j]==""):
+				if can_place(color,matrix,Vector2(j,i)):
+					return true
+	return false
 
 func _ready():
 	# Make empty board
@@ -88,7 +96,7 @@ func _on_HUD_piece_undone(color, matrix, location):
 
 func _on_HUD_rotate_board(numTurns):
 	# Rotate board matrix
-	_rotate_board(numTurns)
+	board = _rotate_board(numTurns)
 	
 	# Rotate tilemaps
 	for color in PLAYERS:

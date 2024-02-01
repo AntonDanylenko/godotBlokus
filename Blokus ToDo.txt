@@ -25,14 +25,22 @@
 	c. Cannot be side to side or overlap with own pieces.
 	d. Cannot overlap other players' pieces.
 8. Make all pieces.
-
 9. Rotate pieces.
 	a. Clockwise and counter
 	b. Shortcut keys
 	c. Flip
-10. Check each turn if no more pieces can be placed and skip player if so.
+10. End game functionality.
+	a. Check each turn if no more pieces can be placed and skip player if so.
+	b. Game over screen.
+		i. Sum up remaining squares for scores.
+		ii. Display winner.
+
+
+
+11. New game button.
 
 
 Extra:
 1. Make picking up pieces easier.
+2. Show player scores entire game.
 

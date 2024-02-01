@@ -11,13 +11,14 @@ var BOARDSIZE = null # Board Size in pixels (x,y)
 var TILESIZE = null # Tile Size in pixels (x,y)
 
 # Dict of all types of pieces with keys as piece names and values as piece shapes
-var PIECETYPES = {"5I":[[1],[1],[1],[1],[1]],"5L":[[1,0],[1,0],[1,0],[1,1]],"5Y":[[1,0],[1,1],[1,0],[1,0]],
-					"5N":[[1,0],[1,1],[0,1],[0,1]],"5T":[[1,1,1],[0,1,0],[0,1,0]],"5V":[[1,0,0],[1,0,0],[1,1,1]],
-					"5W":[[1,0,0],[1,1,0],[0,1,1]],"5X":[[0,1,0],[1,1,1],[0,1,0]],"5Z":[[1,1,0],[0,1,0],[0,1,1]],
-					"5F":[[1,1,0],[0,1,1],[0,1,0]],"5U":[[1,1],[0,1],[1,1]],"5P":[[1,1],[1,1],[1,0]],
-					"4I":[[1],[1],[1],[1]],"4L":[[1,0],[1,0],[1,1]],"4S":[[1,0],[1,1],[0,1]],
-					"4T":[[1,0],[1,1],[1,0]],"4Q":[[1,1],[1,1]],
-					"3I":[[1],[1],[1]],"3L":[[1,0],[1,1]], "2":[[1],[1]], "1":[[1]]}
+var PIECETYPES = {"1":[[1]]}
+#var PIECETYPES = {"5I":[[1],[1],[1],[1],[1]],"5L":[[1,0],[1,0],[1,0],[1,1]],"5Y":[[1,0],[1,1],[1,0],[1,0]],
+#					"5N":[[1,0],[1,1],[0,1],[0,1]],"5T":[[1,1,1],[0,1,0],[0,1,0]],"5V":[[1,0,0],[1,0,0],[1,1,1]],
+#					"5W":[[1,0,0],[1,1,0],[0,1,1]],"5X":[[0,1,0],[1,1,1],[0,1,0]],"5Z":[[1,1,0],[0,1,0],[0,1,1]],
+#					"5F":[[1,1,0],[0,1,1],[0,1,0]],"5U":[[1,1],[0,1],[1,1]],"5P":[[1,1],[1,1],[1,0]],
+#					"4I":[[1],[1],[1],[1]],"4L":[[1,0],[1,0],[1,1]],"4S":[[1,0],[1,1],[0,1]],
+#					"4T":[[1,0],[1,1],[1,0]],"4Q":[[1,1],[1,1]],
+#					"3I":[[1],[1],[1]],"3L":[[1,0],[1,1]], "2":[[1],[1]], "1":[[1]]}
 
 var PLAYERS = ["Y","R","G","B"] # List of colors denoting the four players
 var FULLCOLORNAMES = {"Y":"Yellow","R":"Red","G":"Green","B":"Blue"} # Color names expanded
@@ -46,32 +47,45 @@ func _get_nearest_square(piece):
 								clamp(stepify(piecePosition.y-TILESIZE.y/2, TILESIZE.y),0,BOARDSIZE.y-TILESIZE.y))
 	return nearestSquare
 
-func _rotate_piece(direction):
-	# Rotate the piece matrix 90 degrees in the direction given.
-	var type_matrix = pieceDict[curPiece]["type_matrix"]
-	var new_type_matrix = []
-	for i in range(len(type_matrix[0])):
-		var row = []
-		for j in range(len(type_matrix)):
-			if direction=="counterclockwise":
-				row.append(type_matrix[j][len(type_matrix[0]) - i - 1])
-			elif direction=="clockwise":
-				row.append(type_matrix[len(type_matrix) - j - 1][i])
-		new_type_matrix.append(row)
-	type_matrix=new_type_matrix
-	return type_matrix
+func _can_place_more(color, matrices):
+#	print(color + str(matrices))
+	# Check if any remaining pieces of the color can be placed anywhere on the board in any orientation.
+	var transformations = [0,1,1,1,2,1,1,1] # Cover all orientations
+	for transformation in transformations:
+		for index in range(len(matrices)-1,-1,-1):
+#			print(matrices[index])
+			if transformation>0:
+				matrices[index] = _rotate_piece(matrices[index],"clockwise")
+				if transformation>1:
+					matrices[index] = _flip_piece(matrices[index])
+			if $Board.can_place_anywhere(color,matrices[index]):
+				return true
+	return false
 
-func _flip_piece():
-	# Flip the piece matrix horizontally.
-	var type_matrix = pieceDict[curPiece]["type_matrix"]
-	var new_type_matrix = []
-	for i in range(len(type_matrix)):
+func _rotate_piece(piece_matrix, direction):
+	# Rotate the piece matrix 90 degrees in the direction given.
+	var new_matrix = []
+	for i in range(len(piece_matrix[0])):
 		var row = []
-		for j in range(len(type_matrix[0])):
-			row.append(type_matrix[i][len(type_matrix[0])-j-1])
-		new_type_matrix.append(row)
-	type_matrix=new_type_matrix
-	return type_matrix
+		for j in range(len(piece_matrix)):
+			if direction=="clockwise":
+				row.append(piece_matrix[len(piece_matrix) - j - 1][i])
+			elif direction=="counterclockwise":
+				row.append(piece_matrix[j][len(piece_matrix[0]) - i - 1])
+		new_matrix.append(row)
+	piece_matrix=new_matrix
+	return piece_matrix
+
+func _flip_piece(piece_matrix):
+	# Flip the piece matrix horizontally.
+	var new_matrix = []
+	for i in range(len(piece_matrix)):
+		var row = []
+		for j in range(len(piece_matrix[0])):
+			row.append(piece_matrix[i][len(piece_matrix[0])-j-1])
+		new_matrix.append(row)
+	piece_matrix=new_matrix
+	return piece_matrix
 
 func _reposition_sprites(type_matrix):
 	# Reposition sprites based on new type_matrix
@@ -163,6 +177,64 @@ func _reset_piece_on_tray():
 	# Disable undo and next turn buttons
 	$UndoButton.disabled = true
 	$NextTurnButton.disabled = true
+
+func _count_squares(matrix):
+	# Count number of squares in given piece matrix.
+	var count = 0
+	for i in range(len(matrix)):
+		for j in range(len(matrix[0])):
+			count+=matrix[i][j]
+	return count
+
+func _end_game_screen():
+	# End Game screen
+	var endScreenScene = load("res://data/EndScreen.tscn")
+	var endScreen = endScreenScene.instance()
+	add_child(endScreen)
+	
+	# Calculate final scores
+	var scores = [0,0,0,0]
+	for piece in pieceDict:
+		var index = PLAYERS.find(pieceDict[piece]["color"])
+		scores[index] += _count_squares(pieceDict[piece]["type_matrix"])
+	
+	# Get winner(s)
+	var winners = [0]
+	var minScore = scores[0]
+	for index in range(1,len(scores)):
+		if scores[index]<minScore:
+			winners = [index]
+			minScore = scores[index]
+		elif scores[index]==minScore:
+			winners.append(index)
+	
+	var scoresLabel = endScreen.get_node("Panel").get_node("Scores")
+	var scoresLabelContents = "[center]"
+	for index in range(len(scores)):
+		var player = PLAYERS[index]
+		scoresLabelContents = scoresLabelContents + "[color=#" + HEXCOLORVALUES[player] + "]"
+		scoresLabelContents = scoresLabelContents + FULLCOLORNAMES[player] + "[/color]: " + str(scores[index]) + "\n"
+	scoresLabelContents += "[/center]"
+	scoresLabel.bbcode_text = scoresLabelContents
+	
+	var winnerLabel = endScreen.get_node("Panel").get_node("WINNER")
+	var winnerLabelContents = "[center]"
+	for windex in range(len(winners)):
+		var player = PLAYERS[winners[windex]]
+		winnerLabelContents = winnerLabelContents + "[color=#" + HEXCOLORVALUES[player] + "]"
+		winnerLabelContents = winnerLabelContents + FULLCOLORNAMES[player] + "[/color]"
+		if windex != len(winners)-1:
+			winnerLabelContents += " & "
+	if len(winners)>1:
+		winnerLabelContents += "\nWIN"
+		winnerLabel.rect_size.y = 300
+		scoresLabel.rect_position.y = 475
+	else:
+		winnerLabelContents += " WINS"
+	winnerLabelContents += "[/center]"
+	winnerLabel.bbcode_text = winnerLabelContents
+	
+#	endScreen.get_node("Panel").get_node("NewGameButton").connect("pressed", self, "_on_Start_Pressed")
 
 
 
@@ -278,6 +350,42 @@ func _on_NextTurnButton_pressed():
 	else:
 		curPlayer = PLAYERS[playerIndex+1]
 	
+	# Variable to keep track of whether all players are done placing.
+	var skipCount = 0
+	
+	# Make temp list of all remaining piece matrices.
+	var matrices = []
+	for piece in pieceDict:
+		if pieceDict[piece]["color"]==curPlayer:
+			matrices.append(pieceDict[piece]["type_matrix"])
+	# Check if player can place any more pieces, skip turn if can't.
+	var goNext = not _can_place_more(curPlayer, matrices)
+	while goNext:
+		skipCount+=1
+		if skipCount>3:
+			print("All Players Done!")
+			_end_game_screen()
+			goNext = false
+		else:
+			# Player done popup
+			print(curPlayer + " done.")
+			
+			# Rotate Board
+			emit_signal("rotate_board",1)
+			
+			# Change curPlayer
+			playerIndex = PLAYERS.find(curPlayer)
+			if playerIndex == len(PLAYERS)-1:
+				curPlayer = PLAYERS[0]
+			else:
+				curPlayer = PLAYERS[playerIndex+1]
+			
+			# Make temp list of all remaining piece matrices.
+			matrices = []
+			for piece in pieceDict:
+				if pieceDict[piece]["color"]==curPlayer:
+					matrices.append(pieceDict[piece]["type_matrix"])
+			goNext = not _can_place_more(curPlayer, matrices)
 	
 	# Fill tray
 	for piece in pieceDict:
@@ -358,24 +466,23 @@ func _on_UndoButton_pressed():
 func _on_LeftRotateButton_pressed():
 	if curPiece:
 		# Rotate matrix
-		pieceDict[curPiece]["type_matrix"] = _rotate_piece("counterclockwise")
+		pieceDict[curPiece]["type_matrix"] = _rotate_piece(pieceDict[curPiece]["type_matrix"],"counterclockwise")
 		# Rotate sprites
 		_reposition_sprites(pieceDict[curPiece]["type_matrix"])
 
 func _on_RightRotateButton_pressed():
 	if curPiece:
 		# Rotate matrix
-		pieceDict[curPiece]["type_matrix"] = _rotate_piece("clockwise")
+		pieceDict[curPiece]["type_matrix"] = _rotate_piece(pieceDict[curPiece]["type_matrix"],"clockwise")
 		# Rotate sprites
 		_reposition_sprites(pieceDict[curPiece]["type_matrix"])
 
 func _on_FlipButton_pressed():
 	if curPiece:
 		# Flip matrix
-		pieceDict[curPiece]["type_matrix"] = _flip_piece()
+		pieceDict[curPiece]["type_matrix"] = _flip_piece(pieceDict[curPiece]["type_matrix"])
 		# Flip sprites
 		_reposition_sprites(pieceDict[curPiece]["type_matrix"])
-
 
 func _on_ButtonTimer_timeout():
 	canPress = true
