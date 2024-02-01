@@ -11,14 +11,14 @@ var BOARDSIZE = null # Board Size in pixels (x,y)
 var TILESIZE = null # Tile Size in pixels (x,y)
 
 # Dict of all types of pieces with keys as piece names and values as piece shapes
-var PIECETYPES = {"1":[[1]]}
-#var PIECETYPES = {"5I":[[1],[1],[1],[1],[1]],"5L":[[1,0],[1,0],[1,0],[1,1]],"5Y":[[1,0],[1,1],[1,0],[1,0]],
-#					"5N":[[1,0],[1,1],[0,1],[0,1]],"5T":[[1,1,1],[0,1,0],[0,1,0]],"5V":[[1,0,0],[1,0,0],[1,1,1]],
-#					"5W":[[1,0,0],[1,1,0],[0,1,1]],"5X":[[0,1,0],[1,1,1],[0,1,0]],"5Z":[[1,1,0],[0,1,0],[0,1,1]],
-#					"5F":[[1,1,0],[0,1,1],[0,1,0]],"5U":[[1,1],[0,1],[1,1]],"5P":[[1,1],[1,1],[1,0]],
-#					"4I":[[1],[1],[1],[1]],"4L":[[1,0],[1,0],[1,1]],"4S":[[1,0],[1,1],[0,1]],
-#					"4T":[[1,0],[1,1],[1,0]],"4Q":[[1,1],[1,1]],
-#					"3I":[[1],[1],[1]],"3L":[[1,0],[1,1]], "2":[[1],[1]], "1":[[1]]}
+#var PIECETYPES = {"1":[[1]]}
+var PIECETYPES = {"5I":[[1],[1],[1],[1],[1]],"5L":[[1,0],[1,0],[1,0],[1,1]],"5Y":[[1,0],[1,1],[1,0],[1,0]],
+					"5N":[[1,0],[1,1],[0,1],[0,1]],"5T":[[1,1,1],[0,1,0],[0,1,0]],"5V":[[1,0,0],[1,0,0],[1,1,1]],
+					"5W":[[1,0,0],[1,1,0],[0,1,1]],"5X":[[0,1,0],[1,1,1],[0,1,0]],"5Z":[[1,1,0],[0,1,0],[0,1,1]],
+					"5F":[[1,1,0],[0,1,1],[0,1,0]],"5U":[[1,1],[0,1],[1,1]],"5P":[[1,1],[1,1],[1,0]],
+					"4I":[[1],[1],[1],[1]],"4L":[[1,0],[1,0],[1,1]],"4S":[[1,0],[1,1],[0,1]],
+					"4T":[[1,0],[1,1],[1,0]],"4Q":[[1,1],[1,1]],
+					"3I":[[1],[1],[1]],"3L":[[1,0],[1,1]], "2":[[1],[1]], "1":[[1]]}
 
 var PLAYERS = ["Y","R","G","B"] # List of colors denoting the four players
 var FULLCOLORNAMES = {"Y":"Yellow","R":"Red","G":"Green","B":"Blue"} # Color names expanded
@@ -234,7 +234,7 @@ func _end_game_screen():
 	winnerLabelContents += "[/center]"
 	winnerLabel.bbcode_text = winnerLabelContents
 	
-#	endScreen.get_node("Panel").get_node("NewGameButton").connect("pressed", self, "_on_Start_Pressed")
+	endScreen.get_node("Panel").get_node("NewGameButton").connect("pressed", self, "_on_Restart_pressed")
 
 
 
@@ -267,7 +267,7 @@ func _ready():
 	var startScreenScene = load("res://data/StartScreen.tscn")
 	var startScreen = startScreenScene.instance()
 	add_child(startScreen)
-	startScreen.get_node("StartGameButton").connect("pressed", self, "_on_Start_Pressed")
+	startScreen.get_node("StartGameButton").connect("pressed", self, "_on_Start_pressed")
 
 
 func _process(_delta):
@@ -306,7 +306,7 @@ func _process(_delta):
 
 
 # Signal functions
-func _on_Start_Pressed():
+func _on_Start_pressed():
 	curPlayer = PLAYERS[0]
 	# Unhide first player's pieces
 	for piece in pieceDict:
@@ -317,6 +317,10 @@ func _on_Start_Pressed():
 	get_node("playerHeader" + curPlayer).visible = true
 	# Remove start screen scene
 	remove_child($StartScreen)
+
+func _on_Restart_pressed():
+	var reloaded = get_tree().reload_current_scene()
+	print(reloaded)
 
 func _on_NextTurnButton_pressed():
 	# Disable undo and next turn buttons

@@ -34,9 +34,6 @@
 	b. Game over screen.
 		i. Sum up remaining squares for scores.
 		ii. Display winner.
-
-
-
 11. New game button.
 
 
